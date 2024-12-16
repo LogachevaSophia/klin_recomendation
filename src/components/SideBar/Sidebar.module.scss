@@ -1,0 +1,20 @@
+section {
+    &.sideBar{
+        max-width: 30%;
+        width: 366px;
+        min-width: 366px;
+        height: 100vh;
+        background-color: white;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        border: 1px solid black
+    }
+    &.choice {
+        margin-top: 10px;
+    }
+    &.choice > * {
+        margin-top: 20px;
+    }
+}

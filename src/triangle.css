@@ -1,0 +1,44 @@
+.custom-diamond-node-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .custom-diamond-node {
+    width: 100px;
+    height: 100px;
+    background-color:var(--xy-node-background-color, var(--xy-node-background-color-default));;
+    transform: rotate(45deg); /* Поворот для создания ромба */
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: var(--xy-node-border, var(--xy-node-border-default));
+  }
+  
+  .diamond-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg); /* Выровнять текст внутри ромба */
+    color: var(--xy-node-color, var(--xy-node-color-default));;
+    font-weight: bold;
+  }
+  
+  /* Стили для точек соединения (Handle) */
+  
+  .react-flow__handle-left {
+    left: -5px;
+  }
+  
+  .react-flow__handle-right {
+    right: -5px;
+  }
+  
+  .react-flow__handle-top {
+    top: -5px;
+  }
+  
+  .react-flow__handle-bottom {
+    bottom: -5px;
+  }
+  
