@@ -1,32 +1,21 @@
 import { addEdge, Background, BackgroundVariant, Controls, MiniMap, ReactFlow, useEdgesState, useNodesState } from "@xyflow/react"
 import { useCallback } from "react";
-import { CustomDiamondNode } from "../../NodeTriangle";
-
-const initialNodes = [
-    { id: '1', position: { x: 0, y: 0 }, data: { label: 'dfkhvb ' } },
-    { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-    // {
-    //   id: '3', type: TextUpdaterNode, data: { value: 123 },position: { x: 250, y: 5 },
-    // },
-    {
-        id: 'node-1',
-        type: 'textUpdater',
-        position: { x: 200, y: 0 },
-        data: { value: 123 },
-    },
-];
+import { observer } from "mobx-react-lite";
+import { bpmnStore } from "../../stores/BpmnStore";
 
 
-export const Bpmn = () => {
-    const nodeTypes = { textUpdater: CustomDiamondNode };
-    const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+
+export const Bpmn = observer(() => {
+
+    const [nodes, setNodes, onNodesChange] = useNodesState(bpmnStore.initialNodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(bpmnStore.initialEdges);
     const onConnect = useCallback(
-        (params: any) => setEdges((eds) => addEdge(params, eds)),
+        (connection: any) => {
+          setEdges((eds) => addEdge(connection, eds));
+        },
         [setEdges],
-    );
+      );
 
     return (
         <ReactFlow
@@ -36,7 +25,7 @@ export const Bpmn = () => {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            nodeTypes={nodeTypes}
+            nodeTypes={bpmnStore.nodeTypes}
             fitView
         >
             <Controls />
@@ -44,4 +33,4 @@ export const Bpmn = () => {
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>
     )
-}
+})
