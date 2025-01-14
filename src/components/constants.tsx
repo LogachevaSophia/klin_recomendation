@@ -1,4 +1,4 @@
-export const enum TypesChoiceItem {
+export enum TypesChoiceItem {
     start = "Начало процесса",
     fork = "Эксклюзивная линия",
     action = "Действие",
@@ -30,3 +30,6 @@ export  const svgTypes: SvgType[] = [{
   </svg>
   
 }]
+export function getEnumKeyByValue(value: string): keyof typeof TypesChoiceItem | undefined {
+    return Object.keys(TypesChoiceItem).find(key => TypesChoiceItem[key as keyof typeof TypesChoiceItem] === value) as keyof typeof TypesChoiceItem | undefined;
+}

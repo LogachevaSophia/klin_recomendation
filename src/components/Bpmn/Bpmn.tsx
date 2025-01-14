@@ -1,5 +1,5 @@
 import { addEdge, Background, BackgroundVariant, Controls, MiniMap, ReactFlow, useEdgesState, useNodesState } from "@xyflow/react"
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { bpmnStore } from "../../stores/BpmnStore";
 
@@ -8,15 +8,24 @@ import { bpmnStore } from "../../stores/BpmnStore";
 
 export const Bpmn = observer(() => {
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(bpmnStore.initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(bpmnStore.initialEdges);
+    const {initialNodes, initialEdges, nodeTypes} = bpmnStore
+
+    useEffect(()=>{
+        setNodes(initialNodes)
+    }, [initialNodes])
+
+    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const onConnect = useCallback(
         (connection: any) => {
           setEdges((eds) => addEdge(connection, eds));
         },
         [setEdges],
       );
-
+      const customOnNodesChange = (data: any) => {
+        console.log(data)
+        onNodesChange(data)
+      } 
     return (
         <ReactFlow
 
@@ -25,7 +34,7 @@ export const Bpmn = observer(() => {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            nodeTypes={bpmnStore.nodeTypes}
+            nodeTypes={nodeTypes}
             fitView
         >
             <Controls />

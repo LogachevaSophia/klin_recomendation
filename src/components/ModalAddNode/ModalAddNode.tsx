@@ -12,31 +12,34 @@ export interface Attribute {
 
 interface AttributeModalProps {
     isOpen: boolean;
-    onSave: (attributes: Attribute[]) => void;
-    setOpen: (data: boolean) => void
+    onSave?: (attributes: Attribute[]) => void;
+    setOpen: (data: boolean) => void;
+    attributes?: Attribute[];
+    type?: string;
 }
 
-export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, setOpen, onSave }) => {
+export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, setOpen, onSave, type, attributes=[] }) => {
     const [attributeName, setAttributeName] = useState<string>('');
     const [attributeValue, setAttributeValue] = useState<string>('');
-    const [attributes, setAttributes] = useState<Attribute[]>([]);
-
+    const [attributesProps, setAttributes] = useState<Attribute[]>(attributes);
+    console.log(type)
     const handleAddAttribute = () => {
         if (attributeName && attributeValue) {
-            setAttributes([...attributes, { name: attributeName, value: attributeValue }]);
+            setAttributes([...attributesProps, { name: attributeName, value: attributeValue }]);
             setAttributeName('');
             setAttributeValue('');
         }
     };
 
     const handleSave = () => {
-        onSave(attributes); // Передаем атрибуты в родительский компонент
+        if (!onSave) return
+        onSave(attributesProps); // Передаем атрибуты в родительский компонент
         setOpen(false); // Закрываем модальное окно
     };
 
     const handleDeleteAttribute = (index: number) => {
         // Удаляем атрибут по индексу
-        const updatedAttributes = attributes.filter((_, i) => i !== index);
+        const updatedAttributes = attributesProps.filter((_, i) => i !== index);
         setAttributes(updatedAttributes);
     };
 
@@ -45,8 +48,8 @@ export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, s
         <>
             <Modal open={isOpen} onClose={() => setOpen(false)}>
                 <div className={styles.container}>
-                    {attributes.length > 0 && <ul>
-                        {attributes.map((el, index) => {
+                    {attributesProps.length > 0 && <ul>
+                        {attributesProps.map((el, index) => {
                             return (
                                 <li key={index}>
                                     <Label size="m" theme="info">{el.name}</Label>
@@ -64,7 +67,10 @@ export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, s
                     <Button onClick={handleAddAttribute}>
                         Добавить атрибут
                     </Button>
-                    <Button view="action" size="l" onClick={handleSave}>Добавить ноду</Button>
+                    {type!="edit" && <Button view="action" size="l" onClick={() => {console.log("test2");handleSave();}}>{"Добавить ноду"}</Button>}
+                    {type =="edit" && <Button onClick={() => setOpen(false)}>
+                        Закрыть
+                    </Button>}
                 </div>
                
 
