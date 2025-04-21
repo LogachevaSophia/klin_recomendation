@@ -18,7 +18,7 @@ import '@gravity-ui/uikit/styles/styles.css';
 // import Triangle from './NodeTriangle';
 
 import styles from "./index.module.scss"
-import { CustomDiamondNode } from './NodeTriangle';
+// import { CustomDiamondNode } from './NodeTriangle';
 import { SideBar } from './components/SideBar/SideBar';
 import { Bpmn } from './components/Bpmn/Bpmn';
 

@@ -9,15 +9,15 @@ export const CustomDiamondNode: React.FC = ({ data }: any) => {
     <div className="custom-diamond-node-wrapper">
       <div className="custom-diamond-node">
         
-        <strong className="diamond-label">{data.label}</strong>
+        <strong className="diamond-label">{data.label} Приветики</strong>
       </div>
       
       {/* Точки соединения */}
-      <Handle
+      {/* <Handle
         type="target"
         position={Position.Left}
         className="diamond-handle"
-      />
+      /> */}
       {/* <Handle
         type="source"
         position={Position.Right}

@@ -4,11 +4,11 @@
 // }
 //
 import classNames from "classnames"
-import styles from "./StartNode.module.scss"
+import styles from "./FinishNode.module.scss"
 import { Handle, Position } from "@xyflow/react"
 import { useState } from "react"
-import { ModalAddNode } from "../../ModalAddNode/ModalAddNode"
-export const StartNode: React.FC = ({ data }: any) => {
+// import { ModalAddNode } from "../../ModalAddNode/ModalAddNode"
+export const FinishNode: React.FC = ({ data }: any) => {
     const [isOpen, setOpen] = useState(false)
     return (
         <div onClick={() => {setOpen(true)}}>
@@ -17,8 +17,8 @@ export const StartNode: React.FC = ({ data }: any) => {
                 <strong>{data.label}</strong>
             </div>
             <Handle
-                type="source"
-                position={Position.Right}
+                type="target"
+                position={Position.Left}
                 className="diamond-handle"
                 isConnectable={true}
             />
