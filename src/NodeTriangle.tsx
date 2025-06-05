@@ -11,23 +11,6 @@ export const CustomDiamondNode: React.FC = ({ data }: any) => {
         
         <strong className="diamond-label">{data.label} Приветики</strong>
       </div>
-      
-      {/* Точки соединения */}
-      {/* <Handle
-        type="target"
-        position={Position.Left}
-        className="diamond-handle"
-      /> */}
-      {/* <Handle
-        type="source"
-        position={Position.Right}
-        className="diamond-handle"
-      />
-      <Handle
-        type="source"
-        position={Position.Top}
-        className="diamond-handle"
-      /> */}
     </div>
   );
 };

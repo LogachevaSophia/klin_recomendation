@@ -5,6 +5,7 @@ import { addEdge } from "@xyflow/react";
 import { ActionNode } from "../components/typesNodes/ActionNode/ActionNode";
 import { ConditionNode } from "../components/typesNodes/ConditionNode/ConditionNode";
 import { FinishNode } from "../components/typesNodes/FinishNode/FinishNode";
+import { backendData, transformBackendData } from "./BpmnBackEdit";
 
 interface Position {
     x: number,
@@ -23,6 +24,9 @@ export interface Edge {
     target: string,
     source: string
 }
+
+
+
 
 class BpmnStore {
 
@@ -102,7 +106,7 @@ class BpmnStore {
         ]
     nodeTypes = {
         start: StartNode,
-        // action: ActionNode //на action можно не ставить кастоный тип, он сам по себе подходит по дефолту,
+         action: ActionNode, //на action можно не ставить кастоный тип, он сам по себе подходит по дефолту,
         condition: ConditionNode,
         finish: FinishNode,
         // textUpdater: CustomDiamondNode
@@ -147,6 +151,9 @@ class BpmnStore {
 
 
     constructor() {
+        const data = transformBackendData(backendData)
+        this.initialNodes = data.nodes; 
+        this.initialEdges = data.edges;
         makeAutoObservable(this);
     }
 

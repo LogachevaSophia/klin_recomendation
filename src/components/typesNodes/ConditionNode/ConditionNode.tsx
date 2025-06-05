@@ -14,11 +14,6 @@ export const ConditionNode: React.FC = ({ data }: any) => {
             <div style={contentStyle}>
                 {data.label || 'Condition'}
             </div>
-             {/* <Handle
-                type="target"
-                position={Position.Top}
-                // style={{ transform: 'rotate(-45deg)' }}
-            /> */}
             <Handle
                 type="source"
                 position={Position.Right}
