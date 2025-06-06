@@ -1,0 +1,115 @@
+.container {
+  padding: 20px;
+  // max-width: 1200px;
+  // margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    color: var(--g-color-text-primary);
+  }
+}
+
+.recommendationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.recommendationCard {
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+
+    h3 {
+      margin: 0;
+      color: var(--g-color-text-primary);
+      font-size: 18px;
+      line-height: 24px;
+    }
+  }
+
+  p {
+    color: var(--g-color-text-secondary);
+    margin: 0 0 16px;
+    flex-grow: 1;
+  }
+
+  .cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.category {
+  padding: 4px 8px;
+  background-color: var(--g-color-base-generic);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--g-color-text-secondary);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.priority {
+  &-low {
+    color: var(--g-color-text-positive);
+  }
+
+  &-medium {
+    color: var(--g-color-text-warning);
+  }
+
+  &-high {
+    color: var(--g-color-text-danger);
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.error {
+  margin: 20px;
+}
+
+.flowEditorModal {
+  :global(.Modal-Content) {
+    width: 90vw !important;
+    max-width: 1200px !important;
+    height: 80vh !important;
+    max-height: 800px !important;
+  }
+}
+
+.flowEditorContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+
+  h2 {
+    margin: 0 0 16px;
+    color: var(--g-color-text-primary);
+  }
+} 

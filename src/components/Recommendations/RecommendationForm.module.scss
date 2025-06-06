@@ -1,0 +1,34 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-weight: 500;
+    color: var(--g-color-text-primary);
+  }
+}
+
+.error {
+  color: var(--g-color-text-danger);
+  font-size: 14px;
+  padding: 8px;
+  background-color: var(--g-color-base-danger-light);
+  border-radius: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 12px;
+} 

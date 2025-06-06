@@ -1,38 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  ReactFlow,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  MiniMap,
-  Controls,
-  Background,
-  BackgroundVariant,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-
-
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from '@gravity-ui/uikit';
+import { Recommendations } from './components/Recommendations/Recommendations';
+import { FlowEditorPage } from './pages/FlowEditorPage';
 import '@gravity-ui/uikit/styles/fonts.css';
 import '@gravity-ui/uikit/styles/styles.css';
-
-// import Triangle from './NodeTriangle';
-
-import styles from "./index.module.scss"
-// import { CustomDiamondNode } from './NodeTriangle';
-import { SideBar } from './components/SideBar/SideBar';
-import { Bpmn } from './components/Bpmn/Bpmn';
-
+import './App.css';
 
 const App = () => {
- 
   return (
-    <div style={{ width: '100vw', height: '100vh' }} className={styles.container}>
-      <SideBar/>
-      <Bpmn/>
-    </div>
+    <ThemeProvider>
+      <Router>
+        <div className="app">
+          <Routes>
+            <Route path="/" element={<Recommendations />} />
+            <Route path="/flow-editor/:id" element={<FlowEditorPage />} />
+          </Routes>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
-
-
 };
 
 export default App;

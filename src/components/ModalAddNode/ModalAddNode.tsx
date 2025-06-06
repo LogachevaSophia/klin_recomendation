@@ -1,6 +1,6 @@
 import { Button, Icon, Label, Modal, TextInput } from "@gravity-ui/uikit"
-import { useState } from "react";
-import { TrashBin } from '@gravity-ui/icons';
+import { useState, useEffect } from "react";
+import { TrashBin, Xmark } from '@gravity-ui/icons';
 
 import styles from "./ModalAddNode.module.css"
 import { observer } from "mobx-react-lite";
@@ -21,8 +21,21 @@ interface AttributeModalProps {
 export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, setOpen, onSave, type, attributes=[] }) => {
     const [attributeName, setAttributeName] = useState<string>('');
     const [attributeValue, setAttributeValue] = useState<string>('');
-    const [attributesProps, setAttributes] = useState<Attribute[]>(attributes);
-    console.log(type)
+    const [attributesProps, setAttributes] = useState<Attribute[]>([]);
+
+    // Обновляем локальное состояние при изменении входных атрибутов
+    useEffect(() => {
+        setAttributes(attributes || []);
+    }, [attributes]);
+
+    // Сбрасываем форму при закрытии модального окна
+    useEffect(() => {
+        if (!isOpen) {
+            setAttributeName('');
+            setAttributeValue('');
+        }
+    }, [isOpen]);
+
     const handleAddAttribute = () => {
         if (attributeName && attributeValue) {
             setAttributes([...attributesProps, { name: attributeName, value: attributeValue }]);
@@ -33,48 +46,85 @@ export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, s
 
     const handleSave = () => {
         if (!onSave) return
-        onSave(attributesProps); // Передаем атрибуты в родительский компонент
-        setOpen(false); // Закрываем модальное окно
+        onSave(attributesProps);
+        setOpen(false);
     };
 
     const handleDeleteAttribute = (index: number) => {
-        // Удаляем атрибут по индексу
         const updatedAttributes = attributesProps.filter((_, i) => i !== index);
         setAttributes(updatedAttributes);
     };
 
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
-        <>
-            <Modal open={isOpen} onClose={() => setOpen(false)}>
-                <div className={styles.container}>
-                    {attributesProps.length > 0 && <ul>
-                        {attributesProps.map((el, index) => {
-                            return (
-                                <li key={index}>
-                                    <Label size="m" theme="info">{el.name}</Label>
-                                    <Label size="m" theme="unknown">{el.value}</Label>
-                                    <Button view="outlined" size="m" onClick={() => handleDeleteAttribute(index)}>
-                                        <Icon data={TrashBin} size={18} />
-                                    </Button>
-                                </li>
-
-                            )
-                        })}
-                    </ul>}
-                    <TextInput value={attributeName} placeholder="Название атрибута" onChange={(e) => setAttributeName(e.target.value)} />
-                    <TextInput value={attributeValue} placeholder="Значение атрибута" onChange={(e) => setAttributeValue(e.target.value)} />
+        <Modal 
+            open={isOpen} 
+            onClose={handleClose}
+        >
+            <div className={styles.container}>
+                <div className={styles.header}>
+                    <h3>{type === "edit" ? "Редактирование атрибутов" : "Добавление атрибутов"}</h3>
+                    <Button 
+                        view="flat"
+                        onClick={handleClose}
+                        className={styles.closeButton}
+                    >
+                        <Icon data={Xmark} />
+                    </Button>
+                </div>
+                {attributesProps.length > 0 && (
+                    <ul className={styles.attributesList}>
+                        {attributesProps.map((el, index) => (
+                            <li key={index} className={styles.attributeItem}>
+                                <Label size="m" theme="info">{el.name}</Label>
+                                <Label size="m" theme="unknown">{el.value}</Label>
+                                <Button 
+                                    view="flat" 
+                                    size="m" 
+                                    onClick={() => handleDeleteAttribute(index)}
+                                >
+                                    <Icon data={TrashBin} size={16} />
+                                </Button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                <div className={styles.inputGroup}>
+                    <TextInput
+                        value={attributeName}
+                        placeholder="Название атрибута"
+                        onChange={(e) => setAttributeName(e.target.value)}
+                    />
+                    <TextInput
+                        value={attributeValue}
+                        placeholder="Значение атрибута"
+                        onChange={(e) => setAttributeValue(e.target.value)}
+                    />
                     <Button onClick={handleAddAttribute}>
                         Добавить атрибут
                     </Button>
-                    {type!="edit" && <Button view="action" size="l" onClick={() => {console.log("test2");handleSave();}}>{"Добавить ноду"}</Button>}
-                    {type =="edit" && <Button onClick={() => setOpen(false)}>
-                        Закрыть
-                    </Button>}
                 </div>
-               
-
-            </Modal>
-        </>
-    )
-} )
+                <div className={styles.actions}>
+                    {type !== "edit" && (
+                        <Button view="action" size="l" onClick={handleSave}>
+                            Добавить ноду
+                        </Button>
+                    )}
+                    {type === "edit" && (
+                        <>
+                            <Button view="action" onClick={handleSave}>
+                                Сохранить
+                            </Button>
+                            <Button view="flat" onClick={handleClose}>
+                                Отмена
+                            </Button>
+                        </>
+                    )}
+                </div>
+            </div>
+        </Modal>
+    );
+});

@@ -5,7 +5,8 @@ import { addEdge } from "@xyflow/react";
 import { ActionNode } from "../components/typesNodes/ActionNode/ActionNode";
 import { ConditionNode } from "../components/typesNodes/ConditionNode/ConditionNode";
 import { FinishNode } from "../components/typesNodes/FinishNode/FinishNode";
-import { backendData, transformBackendData } from "./BpmnBackEdit";
+import { backendData, transformBackendData, BackendData } from "./BpmnBackEdit";
+import { SubprocessService } from "./SubprocessService";
 
 interface Position {
     x: number,
@@ -25,178 +26,134 @@ export interface Edge {
     source: string
 }
 
-
-
+interface ProcessData {
+    nodes: Node[];
+    edges: Edge[];
+    name: string;
+}
 
 class BpmnStore {
-
-    initialNodes: Node[] = [
-            {
-                "id": "3",
-                "type": "start",
-                "position": {
-                    "x": -88,
-                    "y": -53.5
-                },
-                "data": {
-                    "type": "start",
-                    "label": "start"
-                },
-            },
-            {
-                "id": "faf2be7e-0687-473c-91c3-29b0011ad69e",
-                "type": "finish",
-                "position": {
-                    "x": 396.04166762033014,
-                    "y": -62.48328353021324
-                },
-                "data": {
-                    "attributes": [],
-                    "label": "конец"
-                },
-            },
-            {
-                "id": "0c187cdb-23a0-4d97-b139-d7aa2b1b2c13",
-                "type": "condition",
-                "position": {
-                    "x": -4,
-                    "y": -60
-                },
-                "data": {
-                    "attributes": [],
-                    "label": "параллель"
-                },
-            },
-            {
-                "id": "ea4d689c-f017-4695-b974-453849d6969a",
-                "type": "action",
-                "position": {
-                    "x": 165.54765543870207,
-                    "y": -102.36152740866312
-                },
-                "data": {
-                    "attributes": [],
-                    "label": "действие 1"
-                },
-            },
-            {
-                "id": "d41d47fe-3e1b-4603-b23f-70e82f280539",
-                "type": "action",
-                "position": {
-                    "x": 174.39371336290753,
-                    "y": -31.59306401501948
-                },
-                "data": {
-                    "attributes": [],
-                    "label": "действие 2"
-                },
-            },
-            {
-                "id": "81ef81c6-c0dd-4247-a8e7-f8bf7d8d4b6d",
-                "type": "action",
-                "position": {
-                    "x": 0,
-                    "y": 0
-                },
-                "data": {
-                    "attributes": [],
-                    "label": "действие 3"
-                }
-            }
-        ]
-    nodeTypes = {
-        start: StartNode,
-         action: ActionNode, //на action можно не ставить кастоный тип, он сам по себе подходит по дефолту,
-        condition: ConditionNode,
-        finish: FinishNode,
-        // textUpdater: CustomDiamondNode
-    }
-    initialEdges: Edge[] = [
-        {
-            "source": "ea4d689c-f017-4695-b974-453849d6969a",
-            "target": "faf2be7e-0687-473c-91c3-29b0011ad69e",
-            "id": "xy-edge__ea4d689c-f017-4695-b974-453849d6969a-faf2be7e-0687-473c-91c3-29b0011ad69e"
-        },
-        {
-            "source": "d41d47fe-3e1b-4603-b23f-70e82f280539",
-            "target": "faf2be7e-0687-473c-91c3-29b0011ad69e",
-            "id": "xy-edge__d41d47fe-3e1b-4603-b23f-70e82f280539-faf2be7e-0687-473c-91c3-29b0011ad69e"
-        },
-        {
-            "source": "81ef81c6-c0dd-4247-a8e7-f8bf7d8d4b6d",
-            "target": "faf2be7e-0687-473c-91c3-29b0011ad69e",
-            "id": "xy-edge__81ef81c6-c0dd-4247-a8e7-f8bf7d8d4b6d-faf2be7e-0687-473c-91c3-29b0011ad69e"
-        },
-        {
-            "source": "0c187cdb-23a0-4d97-b139-d7aa2b1b2c13",
-            "target": "ea4d689c-f017-4695-b974-453849d6969a",
-            "id": "xy-edge__0c187cdb-23a0-4d97-b139-d7aa2b1b2c13true-ea4d689c-f017-4695-b974-453849d6969a"
-        },
-        {
-            "source": "0c187cdb-23a0-4d97-b139-d7aa2b1b2c13",
-            "target": "d41d47fe-3e1b-4603-b23f-70e82f280539",
-            "id": "xy-edge__0c187cdb-23a0-4d97-b139-d7aa2b1b2c13true-d41d47fe-3e1b-4603-b23f-70e82f280539"
-        },
-        {
-            "source": "0c187cdb-23a0-4d97-b139-d7aa2b1b2c13",
-            "target": "81ef81c6-c0dd-4247-a8e7-f8bf7d8d4b6d",
-            "id": "xy-edge__0c187cdb-23a0-4d97-b139-d7aa2b1b2c13true-81ef81c6-c0dd-4247-a8e7-f8bf7d8d4b6d"
-        },
-        {
-            "source": "3",
-            "target": "0c187cdb-23a0-4d97-b139-d7aa2b1b2c13",
-            "id": "xy-edge__3-0c187cdb-23a0-4d97-b139-d7aa2b1b2c13next"
-        }
-    ];
-
-
+    processes: Map<string, ProcessData> = new Map();
+    activeProcessId: string = 'main';
+    
     constructor() {
-        const data = transformBackendData(backendData)
-        this.initialNodes = data.nodes; 
-        this.initialEdges = data.edges;
         makeAutoObservable(this);
+        // Инициализируем основной процесс
+        const mainProcess = transformBackendData(backendData);
+        this.processes.set('main', { ...mainProcess, name: backendData.name });
+        
+        // Загружаем подпроцессы при инициализации
+        this.loadSubprocesses();
+    }
+
+    private async loadSubprocesses() {
+        const mainNodes = this.processes.get('main')?.nodes || [];
+        const subprocessNodes = mainNodes.filter(node => node.data.subprocess_id);
+        
+        for (const node of subprocessNodes) {
+            await this.loadSubprocess(node.data.subprocess_id);
+        }
+    }
+
+    private async loadSubprocess(subprocessId: string) {
+        try {
+            const subprocessData = await SubprocessService.fetchSubprocess(subprocessId);
+            if (subprocessData) {
+                const transformedData = transformBackendData(subprocessData);
+                runInAction(() => {
+                    this.processes.set(subprocessId, {
+                        ...transformedData,
+                        name: subprocessData.name
+                    });
+                });
+            }
+        } catch (error) {
+            console.error(`Error loading subprocess ${subprocessId}:`, error);
+        }
+    }
+
+    get activeProcess(): ProcessData {
+        return this.processes.get(this.activeProcessId) || this.processes.get('main')!;
+    }
+
+    get initialNodes(): Node[] {
+        return this.activeProcess.nodes;
+    }
+
+    get initialEdges(): Edge[] {
+        return this.activeProcess.edges;
+    }
+
+    get availableProcesses() {
+        return Array.from(this.processes.entries()).map(([id, process]) => ({
+            id,
+            name: process.name
+        }));
+    }
+
+    setActiveProcess(processId: string) {
+        runInAction(() => {
+            if (this.processes.has(processId)) {
+                this.activeProcessId = processId;
+            }
+        });
     }
 
     addNewNode(data: Node) {
         runInAction(() => {
-            this.initialNodes = [...this.initialNodes, data];
+            const currentProcess = this.processes.get(this.activeProcessId);
+            if (currentProcess) {
+                currentProcess.nodes = [...currentProcess.nodes, data];
+            }
+        });
+    }
 
-            console.log(this.initialNodes)
-        })
+    updateNodes = (updatedNodes: Node[]) => {
+        runInAction(() => {
+            const currentProcess = this.processes.get(this.activeProcessId);
+            if (currentProcess) {
+                currentProcess.nodes = updatedNodes;
+            }
+        });
+    };
 
+    updateEdges(edges: Edge[]) {
+        runInAction(() => {
+            const currentProcess = this.processes.get(this.activeProcessId);
+            if (currentProcess) {
+                currentProcess.edges = edges;
+            }
+        });
     }
 
     setEdges(connection: any) {
         runInAction(() => {
-            const newEdges = addEdge(connection, this.initialEdges);
-            this.initialEdges = newEdges;
-            console.log(newEdges)
-        })
+            const currentProcess = this.processes.get(this.activeProcessId);
+            if (currentProcess) {
+                const newEdges = addEdge(connection, currentProcess.edges);
+                currentProcess.edges = newEdges;
+            }
+        });
     }
 
     updateNodePosition = (id: string, position: { x: number; y: number }) => {
-        const node = this.initialNodes.find(n => n.id === id);
-        if (node) {
-            node.position = position;
+        const currentProcess = this.processes.get(this.activeProcessId);
+        if (currentProcess) {
+            const node = currentProcess.nodes.find(n => n.id === id);
+            if (node) {
+                node.position = position;
+            }
         }
     };
 
-    updateNodes = (updatedNodes: Node[]) => {
-        runInAction(() => {
-            this.initialNodes = updatedNodes;
-        });
-    };
-    updateEdges(edges: Edge[]) {
-        runInAction(() => {
-        this.initialEdges = edges;
-        console.log(edges)
-        })
-    };
     getApiData() {
-        return {edges: this.initialEdges, nodes: this.initialNodes, "name": "Обследование пациента"}
+        const currentProcess = this.processes.get(this.activeProcessId);
+        return currentProcess ? {
+            edges: currentProcess.edges,
+            nodes: currentProcess.nodes,
+            name: currentProcess.name
+        } : null;
     }
-
-
 }
 
 export const bpmnStore = new BpmnStore();

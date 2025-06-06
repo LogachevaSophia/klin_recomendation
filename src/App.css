@@ -1,6 +1,6 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  /* max-width: 1280px; */
+  /* margin: 0 auto; */
   padding: 2rem;
   text-align: center;
 }
@@ -39,4 +39,30 @@
 
 .read-the-docs {
   color: #888;
+}
+
+:root {
+  --g-color-text-primary: #000;
+  --g-color-text-secondary: #666;
+  --g-color-text-positive: #1ba240;
+  --g-color-text-warning: #ff9800;
+  --g-color-text-danger: #f44336;
+  --g-color-base-generic: #f5f5f5;
+}
+
+.app {
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--g-text-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

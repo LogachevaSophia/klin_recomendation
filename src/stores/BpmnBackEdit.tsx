@@ -17,7 +17,7 @@ interface BackendEdge {
   target: number;
 }
 
-interface BackendData {
+export interface BackendData {
   process_id: string;
   name: string;
   nodes: BackendNode[];
@@ -89,209 +89,146 @@ export function transformBackendData(backendData: BackendData): {
 }
 
 // Пример использования:
-export const backendData = 
-  {
-  "process_id": "d10a7410-b09b-4f27-a8b0-4361d2ef67db",
-  "name": "Диагностика",
-  "nodes": [
-    {
-      "id": 1,
-      "type": 0,
-      "data": {
-        "label": "Начало: \"Диагностика\""
-      },
-      "json_data": {
-        "x": 1,
-        "y": 1
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 2,
-      "type": 3,
-      "data": {
-        "label": "Гистологическое исследование"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 2
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 3,
-      "type": 2,
-      "data": {
-        "label": "Проверка типа гистогологического исследования"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 3
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 4,
-      "type": 3,
-      "data": {
-        "label": "Аденокарцинома"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 4
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 5,
-      "type": 3,
-      "data": {
-        "label": "Плоскоклеточный"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 5
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 6,
-      "type": 3,
-      "data": {
-        "label": "Молекулярно-генетическое исследование"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 6
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 7,
-      "type": 2,
-      "data": {
-        "label": "Выбор молекулярно-генетического исследования"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 7
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 8,
-      "type": 3,
-      "data": {
-        "label": "BRAF"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 8
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 9,
-      "type": 3,
-      "data": {
-        "label": "BRCA"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 9
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 10,
-      "type": 3,
-      "data": {
-        "label": "Не проводилось"
-      },
-      "json_data": {
-        "x": 1,
-        "y": 10
-      },
-      "subprocess_id": null
-    },
-    {
-      "id": 11,
-      "type": 1,
-      "data": {
-        "label": "Конец: \"Диагностика\""
-      },
-      "json_data": {
-        "x": 1,
-        "y": 11
-      },
-      "subprocess_id": null
-    }
-  ],
-  "edges": [
-    {
-      "id": "0",
-      "source": 1,
-      "target": 2
-    },
-    {
-      "id": "1",
-      "source": 2,
-      "target": 3
-    },
-    {
-      "id": "2",
-      "source": 3,
-      "target": 4
-    },
-    {
-      "id": "3",
-      "source": 3,
-      "target": 5
-    },
-    {
-      "id": "4",
-      "source": 4,
-      "target": 6
-    },
-    {
-      "id": "5",
-      "source": 5,
-      "target": 11
-    },
-    {
-      "id": "6",
-      "source": 6,
-      "target": 7
-    },
-    {
-      "id": "7",
-      "source": 7,
-      "target": 8
-    },
-    {
-      "id": "8",
-      "source": 7,
-      "target": 9
-    },
-    {
-      "id": "9",
-      "source": 7,
-      "target": 10
-    },
-    {
-      "id": "10",
-      "source": 8,
-      "target": 11
-    },
-    {
-      "id": "11",
-      "source": 9,
-      "target": 11
-    },
-    {
-      "id": "12",
-      "source": 10,
-      "target": 11
-    }
-  ]
-}
+// export const backendData = 
+//   {
+//   "process_id": "d10a7410-b09b-4f27-a8b0-4361d2ef67db",
+//   "name": "Диагностика",
+//   "nodes": [
+//     {
+//       "id": 1,
+//       "type": 0,
+//       "data": {
+//         "label": "Начало: Диагностика"
+//       },
+//       "json_data": {
+//         "x": 1,
+//         "y": 1
+//       },
+//       "subprocess_id": null
+//     },
+//     {
+//       "id": 2,
+//       "type": 3,
+//       "data": {
+//         "label": "Гистологическое исследование"
+//       },
+//       "json_data": {
+//         "x": 2,
+//         "y": 1
+//       },
+//       "subprocess_id": "subprocess-1"
+//     },
+//     {
+//       "id": 3,
+//       "type": 3,
+//       "data": {
+//         "label": "Молекулярно-генетическое исследование"
+//       },
+//       "json_data": {
+//         "x": 3,
+//         "y": 1
+//       },
+//       "subprocess_id": "subprocess-2"
+//     },
+//     {
+//       "id": 4,
+//       "type": 1,
+//       "data": {
+//         "label": "Конец: Диагностика"
+//       },
+//       "json_data": {
+//         "x": 4,
+//         "y": 1
+//       },
+//       "subprocess_id": null
+//     }
+//   ],
+//   "edges": [
+//     {
+//       "id": "1",
+//       "source": 1,
+//       "target": 2
+//     },
+//     {
+//       "id": "2",
+//       "source": 2,
+//       "target": 3
+//     },
+//     {
+//       "id": "3",
+//       "source": 3,
+//       "target": 4
+//     }
+//   ]
+// }
+export const backendData: BackendData = {
+    "process_id": "main",
+    "name": "Диагностика",
+    "nodes": [
+        {
+            "id": 1,
+            "type": 0,
+            "data": {
+                "label": "Начало: Диагностика"
+            },
+            "json_data": {
+                "x": 1,
+                "y": 1
+            },
+            "subprocess_id": null
+        },
+        {
+            "id": 2,
+            "type": 3,
+            "data": {
+                "label": "Гистологическое исследование"
+            },
+            "json_data": {
+                "x": 2,
+                "y": 1
+            },
+            "subprocess_id": "1f675f61-ffdf-4748-8a68-f85d2cf35657"
+        },
+        {
+            "id": 3,
+            "type": 3,
+            "data": {
+                "label": "Молекулярно-генетическое исследование"
+            },
+            "json_data": {
+                "x": 3,
+                "y": 1
+            },
+            "subprocess_id": "f1acf1f1-26a6-447e-a6a9-f0231eecb7d1"
+        },
+        {
+            "id": 4,
+            "type": 1,
+            "data": {
+                "label": "Конец: Диагностика"
+            },
+            "json_data": {
+                "x": 4,
+                "y": 1
+            },
+            "subprocess_id": null
+        }
+    ],
+    "edges": [
+        {
+            "id": "1",
+            "source": 1,
+            "target": 2
+        },
+        {
+            "id": "2",
+            "source": 2,
+            "target": 3
+        },
+        {
+            "id": "3",
+            "source": 3,
+            "target": 4
+        }
+    ]
+};
