@@ -1,12 +1,37 @@
 .custom.condition{
-    width: 80px;
-    height: 80px;
-    // transform: rotate(45deg);
+    width: 90px;
+    height: 90px;
+    transform: rotate(45deg);
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #ffd0d0;
-    border: 2px solid #555;
-    border-radius: 4px;
+    background: white;
+    border: 2px solid #9ca3af;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
     
+    /* Контент внутри ромба должен быть повернут обратно */
+    .content {
+        transform: rotate(-45deg);
+        text-align: center;
+        max-width: 60px;
+        
+        strong {
+            color: #1f2937;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.2;
+            display: block;
+        }
+    }
+}
+
+/* Стили для handles */
+:global(.condition-handle) {
+    background: #9ca3af;
+    border: 2px solid white;
+    width: 12px;
+    height: 12px;
 }

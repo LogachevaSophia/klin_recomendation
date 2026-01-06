@@ -1,0 +1,200 @@
+.custom.loopContainer {
+    border: 2px solid #9ca3af;
+    background: white;
+    border-radius: 12px;
+    min-width: 300px;
+    min-height: 200px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.header {
+    background: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 9px 9px 0 0;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.loopIcon {
+    font-size: 20px;
+    color: #6b7280;
+}
+
+.headerText {
+    flex: 1;
+    
+    strong {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+    }
+}
+
+.exitCondition {
+    font-size: 11px;
+    color: #6b7280;
+    font-style: italic;
+    margin-bottom: 2px;
+}
+
+.maxIterations {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.content {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    background: #f9fafb;
+    transition: all 0.3s ease;
+    
+    &.dragOver {
+        background: #f3f4f6;
+        border: 2px dashed #9ca3af;
+        border-radius: 8px;
+    }
+}
+
+.placeholder {
+    color: #6b7280;
+    font-size: 12px;
+    text-align: center;
+    font-style: italic;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 20px;
+    width: 100%;
+    background: #f9fafb;
+}
+
+.childNodes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.childNode {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #1f2937;
+    
+    &.conditionalNode {
+        background: #f3f4f6;
+        border-color: #e5e7eb;
+        border-left: 4px solid #9ca3af;
+    }
+}
+
+.childNodeIcon {
+    font-size: 14px;
+    min-width: 16px;
+    text-align: center;
+}
+
+.childNodeContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.childNodeLabel {
+    font-weight: 500;
+}
+
+.conditionalLabel {
+    font-size: 9px;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.childNodeArrow {
+    font-size: 12px;
+    color: #6b7280;
+    text-align: center;
+    margin: 4px 0;
+}
+
+.conditionArrows {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+    padding: 0 12px;
+}
+
+.conditionArrowYes {
+    font-size: 10px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.conditionArrowNo {
+    font-size: 10px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.footer {
+    background: #f3f4f6;
+    border-top: 1px solid #e5e7eb;
+    border-radius: 0 0 9px 9px;
+    padding: 8px 16px;
+}
+
+.exitConditionBlock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.maxIterationsBlock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: #6b7280;
+    font-weight: 400;
+}
+
+/* Стили для handles */
+:global(.loop-container-handle-input),
+:global(.loop-container-handle-output) {
+    background: #9ca3af;
+    border: 3px solid white;
+    width: 14px;
+    height: 14px;
+}
+
+:global(.loop-container-handle-body-start),
+:global(.loop-container-handle-body-end) {
+    background: #9ca3af;
+    border: 2px solid white;
+    width: 12px;
+    height: 12px;
+}

@@ -5,6 +5,7 @@ import {SquarePlus} from '@gravity-ui/icons';
 import React, {useState } from "react";
 import { TypesChoiceItem } from "../SideBar/SideBar";
 import { observer } from "mobx-react-lite";
+import { getEnumKeyByValue } from "../constants";
 
 
 export const ChoiceItem: React.FC<{svg: React.ReactNode, type: TypesChoiceItem, action: (type: TypesChoiceItem, text: string) => void;}> = observer(({svg, type, action}) => {
@@ -18,9 +19,26 @@ export const ChoiceItem: React.FC<{svg: React.ReactNode, type: TypesChoiceItem, 
         action(type, text); // Передаём type и text в функцию
       };
 
+    const handleDragStart = (event: React.DragEvent) => {
+        const nodeData = {
+            type: getEnumKeyByValue(type), // Преобразуем в ключ enum
+            label: text || type, // Используем введенный текст или тип по умолчанию
+        };
+        
+        event.dataTransfer.setData('application/reactflow', JSON.stringify(nodeData));
+        event.dataTransfer.effectAllowed = 'copy';
+    };
+
     return(
         <div className={styles.choiceItem} title={type}>
-             {svg}
+             <div 
+                draggable 
+                onDragStart={handleDragStart}
+                style={{ cursor: 'grab' }}
+                title="Перетащите для добавления в цикл-контейнер"
+            >
+                {svg}
+            </div>
         <TextInput value={text} onChange={onChangeText}/>
         <Button onClick={handleClick}>
             <Icon data={SquarePlus}></Icon>

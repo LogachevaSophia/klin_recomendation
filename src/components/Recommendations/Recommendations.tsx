@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom'; // Unused for now
 import { recommendationStore } from '../../stores/recommendationStore';
 import { Button, Card, Spin, Alert, Modal } from '@gravity-ui/uikit';
 import { RecommendationForm } from './RecommendationForm';
@@ -8,7 +8,7 @@ import { RecommendationResponse } from '../../api/types';
 import styles from './Recommendations.module.scss';
 
 export const Recommendations = observer(() => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Unused for now
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedRecommendation, setSelectedRecommendation] = useState<RecommendationResponse | undefined>();
 

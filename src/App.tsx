@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react'; // Not needed in newer React versions
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@gravity-ui/uikit';
 import { Recommendations } from './components/Recommendations/Recommendations';

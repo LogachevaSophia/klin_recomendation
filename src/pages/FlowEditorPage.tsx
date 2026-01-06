@@ -11,17 +11,30 @@ export const FlowEditorPage: React.FC = observer(() => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
+  // Используем реактивность MobX для получения рекомендации
+  const recommendation = id ? recommendationStore.recommendations.find(r => r.id === id) : null;
+  const recommendationTitle = recommendation?.title || 'Flow Editor';
+
   useEffect(() => {
     const loadData = async () => {
-      if (recommendationStore.recommendations.length === 0) {
-        await recommendationStore.fetchRecommendations();
+      if (!id) {
+        setIsLoading(false);
+        return;
       }
-      setIsLoading(false);
+
+      try {
+        // Если рекомендация не найдена в списке, обновляем список
+        if (!recommendation) {
+          await recommendationStore.fetchRecommendations();
+        }
+      } catch (error) {
+        console.error('Error loading recommendation:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadData();
-  }, []);
-
-  const recommendation = recommendationStore.recommendations.find(r => r.id === id);
+  }, [id, recommendation]);
 
   if (isLoading) {
     return (
@@ -31,11 +44,11 @@ export const FlowEditorPage: React.FC = observer(() => {
     );
   }
 
-  if (!recommendation) {
+  if (!id) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <h1>Recommendation not found</h1>
+          <h1>Invalid recommendation ID</h1>
           <Button view="action" onClick={() => navigate('/')}>
             Back to List
           </Button>
@@ -47,13 +60,13 @@ export const FlowEditorPage: React.FC = observer(() => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>{recommendation.title} - Flow Editor</h1>
+        <h1>{recommendationTitle} - Flow Editor!</h1>
         <Button view="action" onClick={() => navigate('/')}>
           Back to List
         </Button>
       </div>
       <div className={styles.editorContainer}>
-        <FlowEditor recommendationId={recommendation.id} />
+        <FlowEditor recommendationId={id} />
       </div>
     </div>
   );

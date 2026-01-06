@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./Sidebar.module.scss"
-import { Button, Tabs, TabsItemProps } from '@gravity-ui/uikit';
+import { Tabs, TabsItemProps } from '@gravity-ui/uikit';
 import { ChoiceItem } from "../ChoiceItem/ChoiceItem";
 import { observer } from "mobx-react-lite";
 import { getEnumKeyByValue, svgTypes, TypesChoiceItem } from "../constants";
@@ -46,7 +46,7 @@ export const SideBar = observer(() => {
         const newNode = {
             id: uniqueId.toString(),
             type: findedType,
-            position: { x: 0, y: 0 },
+            position: { x: 0, y: 0 }, // Позиция будет установлена при перетаскивании
             data: {
                 label: newNameNode,
                 attributes: attributes
@@ -77,7 +77,6 @@ export const SideBar = observer(() => {
                     <ChoiceItem svg={el.svg} type={el.type} key={ind} action={testaction} />
                 ))}
             </section>
-            <Button onClick={() => {console.log("My data is"); console.log(bpmnStore.getApiData());}}> Выплюнуть данные</Button>
         </section>
     );
 });

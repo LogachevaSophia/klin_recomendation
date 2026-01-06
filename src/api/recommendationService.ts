@@ -2,7 +2,8 @@ import axios from 'axios';
 import { 
   RecommendationResponse, 
   CreateRecommendationRequest, 
-  UpdateRecommendationRequest 
+  UpdateRecommendationRequest,
+  BackendData
 } from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
@@ -13,7 +14,7 @@ export const recommendationService = {
     return response.data;
   },
 
-  async getById(id: string): Promise<RecommendationResponse> {
+  async getById(id: string): Promise<BackendData> {
     const response = await axios.get(`${API_BASE_URL}/recommendations/${id}`);
     return response.data;
   },
@@ -30,5 +31,10 @@ export const recommendationService = {
 
   async delete(id: string): Promise<void> {
     await axios.delete(`${API_BASE_URL}/recommendations/${id}`);
+  },
+
+  async getSubprocess(subprocessId: string): Promise<BackendData> {
+    const response = await axios.get(`${API_BASE_URL}/subprocesses/${subprocessId}`);
+    return response.data;
   }
-}; 
+};
