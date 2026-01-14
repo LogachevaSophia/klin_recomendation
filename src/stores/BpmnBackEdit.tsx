@@ -42,7 +42,7 @@ export interface Position {
 
 export interface Node {
   id: string;
-  type: "start" | "finish" | "subprocess" | "condition" | "action" | "loop" | "loop-container";
+  type: "subprocess" | "condition" | "action";
   position: Position;
   data: any;
 }
@@ -58,30 +58,26 @@ export function transformBackendData(backendData: BackendData): {
   edges: Edge[];
 } {
   // Преобразование узлов
-  // Новый маппинг типов нод:
-  // 0: start - стартовая нода
-  // 1: finish - финишная нода  
+  // Маппинг типов нод:
+  // 0: action (было start) - преобразуется в action
+  // 1: action (было finish) - преобразуется в action
   // 2: condition - нода условий
   // 3: action - нода действий
-  // 4: subprocess - нода подпроцесса (открывает новую вкладку)
-  // 5: loop - нода зацикленных действий (старый тип)
-  // 6: loop-container - контейнер цикла (новый тип)
+  // 4: subprocess - нода подпроцесса
   const typeMap: Record<number, Node["type"]> = {
-    0: "start",
-    1: "finish", 
+    0: "action", // Было start, теперь action
+    1: "action", // Было finish, теперь action
     2: "condition",
     3: "action",
     4: "subprocess",
-    5: "loop",
-    6: "loop-container",
   };
 
   const nodes: Node[] = backendData.nodes.map((backendNode) => {
-    // Обработка label для start и finish
+    // Убираем префиксы "Начало: " и "Конец: " из label
     let label = backendNode.data.label;
-    if (backendNode.type === 0 && label.startsWith('Начало: ')) {
+    if (label.startsWith('Начало: ')) {
       label = label.replace('Начало: ', '');
-    } else if (backendNode.type === 1 && label.startsWith('Конец: ')) {
+    } else if (label.startsWith('Конец: ')) {
       label = label.replace('Конец: ', '');
     }
 

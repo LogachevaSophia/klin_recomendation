@@ -12,13 +12,9 @@ import {
 } from '@xyflow/react';
 import { SideBar } from '../SideBar/SideBar';
 import { ProcessTabs } from '../ProcessTabs/ProcessTabs';
-import { StartNode } from '../typesNodes/StartNode/StartNode';
-import { FinishNode } from '../typesNodes/FinishNode/FinishNode';
 import { ActionNode } from '../typesNodes/ActionNode/ActionNode';
 import { ConditionNode } from '../typesNodes/ConditionNode/ConditionNode';
 import { SubprocessNode } from '../typesNodes/SubprocessNode/SubprocessNode';
-import { LoopNode } from '../typesNodes/LoopNode/LoopNode';
-import { LoopContainer } from '../typesNodes/LoopContainer/LoopContainer';
 import { bpmnStore } from '../../stores/BpmnStore';
 import { observer } from 'mobx-react-lite';
 import { toJS } from 'mobx';
@@ -149,58 +145,15 @@ export const FlowEditor: React.FC<FlowEditorProps> = observer(({ recommendationI
     }
   }, []);
 
-  // Обработчик добавления дочерней ноды в цикл-контейнер
-  const handleAddChildNode = useCallback((containerId: string, nodeData: any) => {
-    console.log('Adding child node to container:', containerId, nodeData);
-    
-    // Найдем контейнер и обновим его данные
-    const updatedNodes = nodes.map(node => {
-      if (node.id === containerId && node.type === 'loop-container') {
-        const currentChildNodes = node.data.childNodes || [];
-        const newChildNode = {
-          id: `child-${Date.now()}`,
-          label: nodeData.label || `${nodeData.type} node`,
-          type: nodeData.type
-        };
-        
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            childNodes: [...currentChildNodes, newChildNode]
-          }
-        };
-      }
-      return node;
-    });
-    
-    setNodes(updatedNodes);
-    bpmnStore.updateNodes(updatedNodes);
-  }, [nodes]);
-
   // Создаем wrapper для SubprocessNode с обработчиком
   const SubprocessNodeWithHandler = useCallback((props: any) => (
     <SubprocessNode {...props} onSubprocessClick={handleSubprocessClick} />
   ), [handleSubprocessClick]);
 
-  // Создаем wrapper для LoopContainer с обработчиком
-  const LoopContainerWithHandler = useCallback((props: any) => (
-    <LoopContainer {...props} onAddChildNode={handleAddChildNode} />
-  ), [handleAddChildNode]);
-
-  // Создаем wrapper для LoopNode с обработчиком
-  const LoopNodeWithHandler = useCallback((props: any) => (
-    <LoopNode {...props} onLoopClick={handleSubprocessClick} />
-  ), [handleSubprocessClick]);
-
   const nodeTypes = {
-    start: StartNode,
-    finish: FinishNode,
     action: ActionNode,
     condition: ConditionNode,
     subprocess: SubprocessNodeWithHandler,
-    loop: LoopNodeWithHandler,
-    'loop-container': LoopContainerWithHandler,
   };
 
   // Обработка выделения элементов
