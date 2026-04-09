@@ -1,5 +1,5 @@
-# Стадия сборки (как PhantiK_frontend/Dockerfile)
-FROM node:20-alpine as builder
+# Стадия сборки
+FROM node:18-alpine as builder
 
 WORKDIR /app
 

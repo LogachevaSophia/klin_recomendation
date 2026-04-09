@@ -7,7 +7,7 @@
 
 import { executionService } from '../api/executionService';
 import { ExecutionEngine } from './ExecutionEngine';
-import type { PatientData, ExecutionResult } from './types';
+import type { PatientData } from './types';
 
 /**
  * Пример 1: Базовое использование через сервис

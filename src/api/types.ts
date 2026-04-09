@@ -72,7 +72,7 @@ export interface Position {
 
 export interface BpmnNode {
   id: string;
-  type: "subprocess" | "condition" | "action";
+  type: "subprocess" | "condition" | "action" | "start" | "finish";
   position: Position;
   data: any;
 }

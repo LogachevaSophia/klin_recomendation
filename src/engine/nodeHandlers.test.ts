@@ -37,7 +37,7 @@ describe('StartNodeHandler', () => {
       type: 'start',
       position: { x: 0, y: 0 },
       data: { label: 'Начало' },
-    } as BpmnNode;
+    };
     const edges: BpmnEdge[] = [
       { id: 'e1', source: 'n1', target: 'n2' },
     ];
@@ -55,7 +55,7 @@ describe('FinishNodeHandler', () => {
       type: 'finish',
       position: { x: 0, y: 0 },
       data: { label: 'Конец' },
-    } as BpmnNode;
+    };
     const out = await handler.execute(node, ctx(), []);
     expect(out.shouldContinue).toBe(false);
     expect(out.result?.final).toBe(true);

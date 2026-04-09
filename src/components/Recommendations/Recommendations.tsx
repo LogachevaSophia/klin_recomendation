@@ -166,7 +166,6 @@ export const Recommendations = observer(() => {
       <Modal
         open={isComparisonOpen}
         onClose={handleCloseComparison}
-        size="s"
       >
         <div className={styles.comparisonModal}>
           <h2>Сравнение процессов</h2>
