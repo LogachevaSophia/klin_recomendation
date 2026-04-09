@@ -44,11 +44,12 @@ jobs:
             type=semver,pattern={{version}}
             type=sha,prefix=
 
-      # Пустой vars.VITE_API_BASE_URL не должен затирать ARG в Dockerfile — подставляем дефолт
+      # Приоритет: Variable → Secret → локальная разработка для пустого ARG в Dockerfile
       - name: Resolve VITE_API_BASE_URL
         id: vite
         run: |
           V="${{ vars.VITE_API_BASE_URL }}"
+          if [ -z "$V" ]; then V="${{ secrets.VITE_API_BASE_URL }}"; fi
           if [ -z "$V" ]; then V="http://localhost:3000/api"; fi
           echo "url=$V" >> "$GITHUB_OUTPUT"
 

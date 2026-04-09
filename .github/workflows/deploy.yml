@@ -1,5 +1,6 @@
 # Деплой на VM как в PhantiK_frontend: образ → save → scp → docker load → run.
-# Секреты: VM_SSH_PRIVATE_KEY, VM_HOST, VM_USER, FRONTEND_PORT, VITE_API_BASE_URL (URL API для сборки SPA, напр. http://host:3000/api)
+# Секреты: VM_SSH_PRIVATE_KEY, VM_HOST, VM_USER, FRONTEND_PORT
+# Опционально: VITE_API_BASE_URL — полный URL API для сборки. Если не задан: http://<VM_HOST>:8000/api
 
 name: Deploy Frontend to VM
 
@@ -27,9 +28,15 @@ jobs:
       - name: Resolve VITE_API_BASE_URL
         id: vite
         env:
-          SECRET_URL: ${{ secrets.VITE_API_BASE_URL }}
+          EXPLICIT: ${{ secrets.VITE_API_BASE_URL }}
+          VM_HOST: ${{ secrets.VM_HOST }}
+          API_PORT: ${{ vars.VITE_API_PORT }}
         run: |
-          V="$SECRET_URL"
+          V="$EXPLICIT"
+          if [ -z "$V" ] && [ -n "$VM_HOST" ]; then
+            P="${API_PORT:-8000}"
+            V="http://${VM_HOST}:${P}/api"
+          fi
           if [ -z "$V" ]; then V="http://localhost:3000/api"; fi
           echo "url=$V" >> "$GITHUB_OUTPUT"
 
