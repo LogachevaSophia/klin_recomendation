@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ProcessComparison } from './comparisonTypes';
 
+/** Базовый URL бэкенда (из браузера), не origin статики фронта */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 export const comparisonService = {
