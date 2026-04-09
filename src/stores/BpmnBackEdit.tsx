@@ -3,6 +3,12 @@ interface BackendNode {
   type: number;
   data: {
     label: string;
+    attributes?: Array<{ name: string; value: string }>;
+    loopCondition?: string;
+    maxIterations?: number;
+    loopSubprocessId?: string;
+    exitCondition?: string;
+    [key: string]: any; // Для других полей
   };
   json_data: {
     x: number;
@@ -81,6 +87,35 @@ export function transformBackendData(backendData: BackendData): {
       label = label.replace('Конец: ', '');
     }
 
+    // Собираем данные узла, включая все поля из backendNode.data
+    const nodeData: any = {
+      label: label,
+    };
+
+    // Копируем атрибуты, если они есть
+    if (backendNode.data.attributes && Array.isArray(backendNode.data.attributes)) {
+      nodeData.attributes = backendNode.data.attributes;
+    }
+
+    // Копируем другие поля из data (loopCondition, maxIterations и т.д.)
+    if (backendNode.data.loopCondition) {
+      nodeData.loopCondition = backendNode.data.loopCondition;
+    }
+    if (backendNode.data.loopSubprocessId) {
+      nodeData.loopSubprocessId = backendNode.data.loopSubprocessId;
+    }
+    if (backendNode.data.maxIterations) {
+      nodeData.maxIterations = backendNode.data.maxIterations;
+    }
+    if (backendNode.data.exitCondition) {
+      nodeData.exitCondition = backendNode.data.exitCondition;
+    }
+
+    // Добавляем subprocess_id, если есть
+    if (backendNode.subprocess_id) {
+      nodeData.subprocess_id = backendNode.subprocess_id;
+    }
+
     return {
       id: String(backendNode.id),
       type: typeMap[backendNode.type] || "action",
@@ -88,10 +123,7 @@ export function transformBackendData(backendData: BackendData): {
         x: backendNode.json_data.x * 200, // Горизонтальная позиция (слева направо)
         y: backendNode.json_data.y * 200, // Вертикальная позиция (для веток)
       },
-      data: {
-        label: label,
-        ...(backendNode.subprocess_id && { subprocess_id: backendNode.subprocess_id }),
-      },
+      data: nodeData,
     };
   });
 

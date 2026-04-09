@@ -41,6 +41,10 @@ export const Recommendations = observer(() => {
     window.open(`/flow-editor/${recommendation.id}`, '_blank');
   };
 
+  const handleOpenExecution = (recommendation: RecommendationResponse) => {
+    navigate(`/execution/${recommendation.id}`);
+  };
+
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setSelectedRecommendation(undefined);
@@ -114,6 +118,13 @@ export const Recommendations = observer(() => {
             <div className={styles.cardFooter}>
               <span className={styles.category}>{recommendation.category}</span>
               <div className={styles.actions}>
+                <Button
+                  view="action"
+                  size="s"
+                  onClick={() => handleOpenExecution(recommendation)}
+                >
+                  🚀 Выполнить
+                </Button>
                 <Button
                   view="outlined"
                   size="s"

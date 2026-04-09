@@ -51,6 +51,26 @@ export const FlowEditorPage: React.FC = observer(() => {
         label: label,
       };
       
+      // Сохраняем атрибуты, если они есть
+      if (node.data.attributes && Array.isArray(node.data.attributes) && node.data.attributes.length > 0) {
+        nodeData.attributes = node.data.attributes.map((attr: any) => ({
+          name: attr.name || '',
+          value: attr.value || ''
+        }));
+        console.log(`Node ${node.id} attributes:`, node.data.attributes);
+      }
+      
+      // Сохраняем другие данные узла (loopCondition, maxIterations и т.д.)
+      if (node.data.loopCondition) {
+        nodeData.loopCondition = node.data.loopCondition;
+      }
+      if (node.data.loopSubprocessId) {
+        nodeData.loopSubprocessId = node.data.loopSubprocessId;
+      }
+      if (node.data.maxIterations) {
+        nodeData.maxIterations = node.data.maxIterations;
+      }
+      
       // Все ноды, которые не condition или subprocess, становятся action (тип 3)
       // Это включает бывшие start и finish
       const nodeType = typeMap[node.type] || 3;
@@ -115,6 +135,7 @@ export const FlowEditorPage: React.FC = observer(() => {
     
     // Выводим в консоль в формате, готовом для копирования
     console.log('=== Данные для бэкенда (скопируйте JSON и вставьте в data.ts) ===');
+    console.log('Узлы с атрибутами:', backendNodes.filter(n => n.data.attributes && n.data.attributes.length > 0));
     const jsonString = JSON.stringify(backendData, null, 2);
     console.log(jsonString);
     console.log('\n=== Конец данных ===');
