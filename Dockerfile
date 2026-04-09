@@ -1,5 +1,5 @@
-# Как PhantiK_frontend: builder → nginx:alpine, без npm ci / лишних ENV.
-FROM node:18-alpine AS builder
+# Node 20+: lockfile тянет react-router 7, vitest 4, jsdom и др. — они требуют engines >=20 (не путать с PhantiK на node:18).
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
