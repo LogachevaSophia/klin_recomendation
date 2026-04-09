@@ -1,4 +1,3 @@
-/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -16,16 +15,5 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['js-big-decimal']
-  },
-  test: {
-    environment: 'jsdom',
-    globals: false,
-    setupFiles: ['./src/vitest.setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'html'],
-      include: ['src/engine/**/*.ts'],
-    },
   },
 })

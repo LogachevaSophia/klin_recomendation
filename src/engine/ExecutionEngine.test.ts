@@ -27,13 +27,13 @@ describe('ExecutionEngine', () => {
           type: 'start',
           position: { x: 0, y: 0 },
           data: { label: 'Начало' },
-        } as BpmnNode,
+        },
         {
           id: 'n2',
           type: 'finish',
           position: { x: 0, y: 0 },
           data: { label: 'Конец' },
-        } as BpmnNode,
+        },
       ],
       edges: [{ id: 'e1', source: 'n1', target: 'n2' }],
     });

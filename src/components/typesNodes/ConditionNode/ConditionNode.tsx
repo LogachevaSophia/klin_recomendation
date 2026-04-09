@@ -1,7 +1,6 @@
 import { Handle, Position } from "@xyflow/react"
 import styles from "./ConditionNode.module.scss"
 import classNames from "classnames"
-import { Label } from "@gravity-ui/uikit"
 
 export const ConditionNode: React.FC = ({ data }: any) => {
     return (

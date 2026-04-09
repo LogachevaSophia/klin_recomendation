@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react';
+import { ReactFlow, Background, Controls } from '@xyflow/react';
 import { comparisonService } from '../../api/comparisonService';
 import { ProcessComparison as ProcessComparisonType } from '../../api/comparisonTypes';
 import { transformBackendData } from '../../stores/BpmnBackEdit';

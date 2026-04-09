@@ -1,4 +1,4 @@
-import { BackendData, BackendNode, BackendEdge } from './types';
+import { BackendNode, BackendEdge } from './types';
 
 // Типы для сравнения нод
 export type NodeComparisonStatus = 'added' | 'removed' | 'modified' | 'unchanged';
