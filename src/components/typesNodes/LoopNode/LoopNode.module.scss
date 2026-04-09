@@ -1,0 +1,88 @@
+.custom {
+  min-width: 120px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 2px solid;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loopNode {
+  border-color: #9ca3af;
+  background: white;
+}
+
+.loopIcon {
+  font-size: 24px;
+  color: #6b7280;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  strong {
+    color: #1f2937;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+}
+
+.clickHint {
+    font-size: 9px;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 2px;
+}
+
+.condition {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.iterations {
+  font-size: 10px;
+  color: #6b7280;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* Handle стили */
+:global(.loop-handle-input) {
+  background: #9ca3af;
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+}
+
+:global(.loop-handle-output) {
+  background: #9ca3af;
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+}
+
+:global(.loop-handle-body) {
+  background: #9ca3af;
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+}
+
+:global(.loop-handle-return) {
+  background: #9ca3af;
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+}

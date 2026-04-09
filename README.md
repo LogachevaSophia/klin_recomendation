@@ -1,68 +1,129 @@
-# Recommendation System
+# 🏥 Клинические Рекомендации
 
-A modern web application for managing recommendations built with React, TypeScript, and MobX.
+> **Система визуального редактирования медицинских процессов с поддержкой BPMN-диаграмм**
 
-## Features
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![React](https://img.shields.io/badge/React-18-61dafb.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
+![Vite](https://img.shields.io/badge/Vite-5-646cff.svg)
 
-- Create, read, update, and delete recommendations
-- Priority-based categorization
-- Responsive design
-- Real-time state management with MobX
-- Modern UI with Gravity UI Kit
+## 🚀 Быстрый старт
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
 ```bash
+# Установка зависимостей
 npm install
-```
 
-### Development
-
-Start the development server:
-```bash
+# Запуск в режиме разработки
 npm run dev
+
+# Открыть в браузере
+open http://localhost:5173
 ```
 
-The application will be available at `http://localhost:5173`
+## ✨ Основные возможности
 
-### Environment Variables
+- 🎨 **5 типов функциональных нод**: Start, Finish, Action, Condition, Subprocess, Loop
+- 📑 **Многоуровневая навигация** с вкладками для подпроцессов
+- 🔗 **Интерактивные связи** между элементами процесса
+- 💾 **Управление рекомендациями** (CRUD операции)
+- 🧪 **Mock-режим** для разработки и демонстрации
 
-Create a `.env` file in the root directory with the following variables:
+## 🎯 Типы нод
 
-```env
-VITE_API_BASE_URL=http://your-api-url
+| Тип | Вид | Описание | Цвет |
+|-----|-----|----------|------|
+| 🟢 **Start** | Круглая | Начало процесса | Зеленый |
+| 🔴 **Finish** | Круглая | Завершение процесса | Красный |
+| 🟡 **Condition** | Ромб | Принятие решений | Желтый |
+| 🔵 **Action** | Прямоугольная | Выполнение действий | Синий |
+| 🟦 **Subprocess** | Прямоугольная | Вложенный процесс | Голубой |
+| 🟣 **Loop** | Прямоугольная | Циклические операции | Фиолетовый |
+
+## 🗂️ Навигация
+
+- **Главная страница** (`/`) - Список всех рекомендаций
+- **Редактор процессов** (`/flow-editor/:id`) - Визуальное редактирование BPMN
+- **Вкладки процессов** - Переключение между главным процессом и подпроцессами
+
+## 🛠️ Технологии
+
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI**: @gravity-ui/uikit + SCSS Modules  
+- **Flow Editor**: @xyflow/react
+- **State Management**: MobX
+- **HTTP Client**: Axios
+- **Routing**: React Router
+
+## 📚 Документация
+
+- 📖 **[Полная документация](./DOCUMENTATION.md)** - Архитектура, компоненты, API
+- 🔌 **[API документация](./API_DOCUMENTATION.md)** - REST API endpoints и типы данных
+
+## 🧪 Режим разработки
+
+Приложение работает в Mock-режиме с предустановленными данными:
+
+```typescript
+// В recommendationStore.ts
+useMockData = true; // Включить mock данные
 ```
 
-## Project Structure
+### Доступные процессы:
+- **Процесс 1**: Диагностика простуды (6 нод + подпроцесс)
+- **Процесс 2**: Лечение гриппа (3 ноды)
+- **Процесс 3**: Лечение онкологии (4 ноды)
+
+## 🎮 Использование
+
+### Создание процесса
+1. Откройте редактор: `/flow-editor/1`
+2. Используйте боковую панель для добавления нод
+3. Соединяйте ноды перетаскиванием между Handle точками
+4. Двойной клик по ноде для редактирования
+
+### Работа с подпроцессами
+1. Добавьте ноду типа "Subprocess"
+2. Укажите `subprocess_id` в свойствах
+3. Кликните по ноде для открытия в новой вкладке
+
+### Циклические операции
+1. Добавьте ноду типа "Loop"
+2. Используйте 4 Handle точки:
+   - **Левая** (вход в цикл)
+   - **Правая** (выход из цикла)  
+   - **Нижняя** (тело цикла)
+   - **Верхняя** (возврат в цикл)
+
+## 🔧 Команды
+
+```bash
+npm run dev          # Запуск в режиме разработки
+npm run build        # Сборка для продакшена
+npm run preview      # Предварительный просмотр сборки
+npm run lint         # Проверка кода линтером
+```
+
+## 📝 Структура проекта
 
 ```
 src/
-  ├── api/              # API services and types
-  ├── components/       # React components
-  ├── stores/          # MobX stores
-  ├── assets/          # Static assets
-  └── App.tsx          # Root component
+├── api/                 # API слой и типы
+├── components/          # React компоненты
+│   ├── FlowEditor/      # Главный редактор
+│   ├── ProcessTabs/     # Навигация по процессам
+│   └── typesNodes/      # Компоненты нод
+├── stores/              # MobX состояние
+├── pages/               # Страницы приложения
+└── assets/              # Статические ресурсы
 ```
 
-## Technologies Used
+## 🤝 Разработка
 
-- React
-- TypeScript
-- MobX
-- Vite
-- Gravity UI Kit
-- Axios
-- SCSS Modules
+1. Склонируйте репозиторий
+2. Установите зависимости: `npm install`
+3. Запустите dev сервер: `npm run dev`
+4. Откройте `http://localhost:5173`
 
-## Types nodes
-0 = старт, 1 - стоп, 2 = условие/параллель, 3 = действие, 4 - подпроцесс
-type: "start" | "finish" | "condition" | "action" | "newprocess"
+---
+
+**Разработано с ❤️ для медицинских специалистов**

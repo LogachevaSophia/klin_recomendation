@@ -1,4 +1,5 @@
 import { BackendData } from './BpmnBackEdit';
+import { recommendationService } from '../api/recommendationService';
 
 // Моковые данные для подпроцессов
 const mockSubprocesses: Record<string, BackendData> = {
@@ -349,11 +350,16 @@ const mockSubprocesses: Record<string, BackendData> = {
 };
 
 export class SubprocessService {
-    // В будущем здесь будет реальный API-запрос
     static async fetchSubprocess(subprocessId: string): Promise<BackendData | null> {
-        // Имитируем задержку сети
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        return mockSubprocesses[subprocessId] || null;
+        try {
+            // Используем новый метод из recommendationService
+            const data = await recommendationService.getSubprocess(subprocessId);
+            return data;
+        } catch (error) {
+            // Fallback на старые мок данные
+            console.warn(`Fallback to legacy mock data for subprocess ${subprocessId}`);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            return mockSubprocesses[subprocessId] || null;
+        }
     }
 } 

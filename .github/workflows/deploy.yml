@@ -1,0 +1,104 @@
+# Деплой на VM как в PhantiK_frontend: образ → save → scp → docker load → run.
+# Секреты: VM_SSH_PRIVATE_KEY, VM_HOST, VM_USER, FRONTEND_PORT, VITE_API_BASE_URL (URL API для сборки SPA, напр. http://host:3000/api)
+
+name: Deploy Frontend to VM
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - master
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Resolve VITE_API_BASE_URL
+        id: vite
+        env:
+          SECRET_URL: ${{ secrets.VITE_API_BASE_URL }}
+        run: |
+          V="$SECRET_URL"
+          if [ -z "$V" ]; then V="http://localhost:3000/api"; fi
+          echo "url=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: klin-recomendation:latest
+          build-args: |
+            VITE_API_BASE_URL=${{ steps.vite.outputs.url }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save Docker image
+        run: |
+          docker save klin-recomendation:latest | gzip > klin-recomendation.tar.gz
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Deploy to VM
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          FRONTEND_PORT: ${{ secrets.FRONTEND_PORT }}
+        run: |
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            klin-recomendation.tar.gz $VM_USER@$VM_HOST:/tmp/
+
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $VM_USER@$VM_HOST << 'ENDSSH'
+            set -e
+            echo "Loading image..."
+            docker load -i /tmp/klin-recomendation.tar.gz
+
+            echo "Stopping old container..."
+            docker stop klin-recomendation 2>/dev/null || true
+            docker rm klin-recomendation 2>/dev/null || true
+
+            echo "Starting container..."
+            docker run -d \
+              --name klin-recomendation \
+              --restart unless-stopped \
+              -p ${{ env.FRONTEND_PORT }}:80 \
+              klin-recomendation:latest
+
+            docker image prune -f
+            rm -f /tmp/klin-recomendation.tar.gz
+            docker ps | grep klin-recomendation || true
+          ENDSSH
+
+      - name: Verify deployment
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            "$VM_USER@$VM_HOST" "docker logs --tail 30 klin-recomendation"
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "Deployment successful. Frontend: http://${{ secrets.VM_HOST }}:${{ secrets.FRONTEND_PORT }}"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Deployment failed."
+          exit 1

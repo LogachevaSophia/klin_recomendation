@@ -1,12 +1,12 @@
-import { addEdge, applyNodeChanges, Background, BackgroundVariant, Controls, MiniMap, OnNodesChange, ReactFlow, useEdgesState, useNodesState } from "@xyflow/react"
+import { addEdge, applyNodeChanges, Background, BackgroundVariant, Controls, MiniMap, ReactFlow, useEdgesState, useNodesState } from "@xyflow/react"
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { bpmnStore } from "../../stores/BpmnStore";
 
 export const Bpmn = observer(() => {
-    const {initialNodes, initialEdges, nodeTypes} = bpmnStore;
+    const {initialNodes, initialEdges} = bpmnStore;
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [nodes, setNodes] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
     // Синхронизация nodes при изменении initialNodes
@@ -52,7 +52,7 @@ export const Bpmn = observer(() => {
             onNodesChange={handleNodesChange}
             onEdgesChange={handleEdgesChange}
             onConnect={onConnect}
-            nodeTypes={nodeTypes}
+            // nodeTypes={nodeTypes} // nodeTypes not available in bpmnStore
             fitView
         >
             <Controls />

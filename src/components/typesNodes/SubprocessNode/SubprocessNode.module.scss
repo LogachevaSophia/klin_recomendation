@@ -1,0 +1,74 @@
+.custom {
+  min-width: 140px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  border: 2px solid;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px 12px;
+}
+
+.subprocessNode {
+  border-color: #9ca3af;
+  background: white;
+}
+
+.subprocessIcon {
+  font-size: 20px;
+  color: #6b7280;
+  margin-right: 8px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  
+  strong {
+    color: #1f2937;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+}
+
+.subprocessId {
+  font-size: 10px;
+  color: #6b7280;
+  margin-bottom: 2px;
+  font-family: monospace;
+}
+
+.clickHint {
+  font-size: 10px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.expandIcon {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+/* Handle стили */
+:global(.subprocess-handle-input) {
+  background: #9ca3af;
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+}
+
+:global(.subprocess-handle-output) {
+  background: #9ca3af;
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+}

@@ -1,9 +1,28 @@
 .custom.startFinishNode{
-    border: 2px solid black;
+    border: 2px solid #9ca3af;
+    background: white;
     border-radius: 50%;
-    min-width:50px;
-    min-height: 50px;
+    min-width: 60px;
+    min-height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    strong {
+        color: #1f2937;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+    }
+}
+
+/* Стили для handles */
+:global(.start-handle) {
+    background: #9ca3af;
+    border: 2px solid white;
+    width: 12px;
+    height: 12px;
 }

@@ -19,6 +19,11 @@
   }
 }
 
+.headerActions {
+  display: flex;
+  gap: 12px;
+}
+
 .editorContainer {
   flex-grow: 1;
   min-height: 0;

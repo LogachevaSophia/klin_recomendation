@@ -1,0 +1,63 @@
+# Сборка SPA → публикация образа в ghcr.io (без деплоя на VM).
+# Деплой на машину: см. deploy.yml (как PhantiK_frontend: scp + docker load).
+
+name: Docker build and push (ghcr)
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+            type=semver,pattern={{version}}
+            type=sha,prefix=
+
+      # Пустой vars.VITE_API_BASE_URL не должен затирать ARG в Dockerfile — подставляем дефолт
+      - name: Resolve VITE_API_BASE_URL
+        id: vite
+        run: |
+          V="${{ vars.VITE_API_BASE_URL }}"
+          if [ -z "$V" ]; then V="http://localhost:3000/api"; fi
+          echo "url=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_API_BASE_URL=${{ steps.vite.outputs.url }}
