@@ -1,28 +1,21 @@
-# Сборка SPA (как PhantiK_frontend: builder → nginx:alpine)
-FROM node:20-alpine AS builder
+# Как PhantiK_frontend: builder → nginx:alpine, без npm ci / лишних ENV.
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Флаг --include=dev у npm = «установить пакеты из секции devDependencies в package.json» (там лежит vite как инструмент сборки).
-# Не путать с NODE_ENV=development: финальная статика собирается командой vite build ниже.
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY vite.config.ts ./
-COPY index.html ./
 
-RUN npm ci --include=dev
+RUN npm install
 
 COPY . .
 
-# Базовый URL бэкенда (REST), куда из браузера идут запросы axios — НЕ URL страницы фронта.
-# Пример: http://<сервер>:3000/api при прокси IAM или http://<сервер>:8000/api до Clinrec.
-# Задаётся при сборке: --build-arg VITE_API_BASE_URL=... или CI Variable/Secret.
+# Базовый URL бэкенда (REST) для бандла; задаётся при сборке или в CI
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
-# production — нормальный режим для vite build (оптимизация)
-ENV NODE_ENV=production
-RUN npx vite build
+RUN npm run build:docker
 
 FROM nginx:alpine
 
