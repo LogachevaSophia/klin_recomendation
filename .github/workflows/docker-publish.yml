@@ -44,21 +44,10 @@ jobs:
             type=semver,pattern={{version}}
             type=sha,prefix=
 
-      # Приоритет: Variable → Secret → локальная разработка для пустого ARG в Dockerfile
-      - name: Resolve VITE_API_BASE_URL
-        id: vite
-        run: |
-          V="${{ vars.VITE_API_BASE_URL }}"
-          if [ -z "$V" ]; then V="${{ secrets.VITE_API_BASE_URL }}"; fi
-          if [ -z "$V" ]; then V="http://localhost:3000/api"; fi
-          echo "url=$V" >> "$GITHUB_OUTPUT"
-
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            VITE_API_BASE_URL=${{ steps.vite.outputs.url }}
