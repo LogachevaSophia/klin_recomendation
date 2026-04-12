@@ -26,6 +26,7 @@ export interface BackendNode {
   type: number;
   data: {
     label: string;
+    attributes?: Array<{ name: string; value: string }>;
     loopCondition?: string;
     maxIterations?: number;
     loopSubprocessId?: string;

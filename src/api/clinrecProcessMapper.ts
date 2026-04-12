@@ -1,4 +1,11 @@
-import type { BackendData, RecommendationResponse } from './types';
+import type {
+  BackendData,
+  BackendEdge,
+  BackendNode,
+  BpmnEdge,
+  BpmnNode,
+  RecommendationResponse,
+} from './types';
 
 /** Ответ бэкенда Clinrec (domain), см. definitions в doc.json */
 export interface DomainProcess {
@@ -83,6 +90,111 @@ export function domainProcessToBackendData(p: DomainProcess): BackendData {
     target: e.target ?? 0,
   }));
   return { process_id, name, nodes, edges };
+}
+
+const reactFlowTypeToBackend: Record<string, number> = {
+  condition: 2,
+  action: 3,
+  subprocess: 4,
+};
+
+function gridFromPosition(px: number): number {
+  if (px == null || Number.isNaN(px)) return 0;
+  return Math.abs(px) > 100 ? Math.round(px / 200) : Math.round(px);
+}
+
+function numericNodeId(nodeId: string, fallback: number): number {
+  const n = parseInt(String(nodeId), 10);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+/**
+ * Текущее состояние редактора (MobX/React Flow) → BackendData для PUT /api/v1/process.
+ */
+export function flowEditorStateToBackendData(
+  nodes: BpmnNode[],
+  edges: BpmnEdge[],
+  processId: string,
+  name: string
+): BackendData {
+  const backendNodes: BackendNode[] = nodes.map((node, idx) => {
+    const rawLabel = String(node.data?.label ?? '');
+    let label = rawLabel;
+    const hadStartPrefix = label.startsWith('Начало: ');
+    const hadEndPrefix = label.startsWith('Конец: ');
+    if (hadStartPrefix) label = label.replace('Начало: ', '');
+    else if (hadEndPrefix) label = label.replace('Конец: ', '');
+
+    const x = gridFromPosition(node.position.x);
+    const y = gridFromPosition(node.position.y);
+
+    const nodeData: BackendNode['data'] = { label };
+
+    const attrs = node.data?.attributes;
+    if (attrs && Array.isArray(attrs) && attrs.length > 0) {
+      nodeData.attributes = attrs.map((attr: { name?: string; value?: string }) => ({
+        name: attr.name ?? '',
+        value: attr.value ?? '',
+      }));
+    }
+    if (node.data?.loopCondition) nodeData.loopCondition = node.data.loopCondition;
+    if (node.data?.loopSubprocessId) nodeData.loopSubprocessId = node.data.loopSubprocessId;
+    if (node.data?.maxIterations != null) nodeData.maxIterations = node.data.maxIterations;
+    if (node.data?.exitCondition) nodeData.exitCondition = node.data.exitCondition;
+
+    const subprocess_id = node.data?.subprocess_id ?? null;
+
+    const preserved = (node.data as { backendType?: number })?.backendType;
+    let typeNum: number;
+    if (typeof preserved === 'number' && preserved >= 0 && preserved <= 4) {
+      typeNum = preserved;
+      if (typeNum === 0) nodeData.label = `Начало: ${name || label}`;
+      else if (typeNum === 1) nodeData.label = `Конец: ${name || label}`;
+    } else {
+      typeNum = reactFlowTypeToBackend[node.type] ?? 3;
+      if (hadStartPrefix) typeNum = 0;
+      if (hadEndPrefix) typeNum = 1;
+    }
+
+    return {
+      id: numericNodeId(node.id, idx + 1),
+      type: typeNum,
+      data: nodeData,
+      json_data: { x, y },
+      subprocess_id,
+    };
+  });
+
+  const backendEdges: BackendEdge[] = edges.map((edge) => {
+    const backendEdge: BackendEdge = {
+      id: edge.id,
+      source: parseInt(String(edge.source), 10),
+      target: parseInt(String(edge.target), 10),
+    };
+
+    if (edge.label && edge.label !== 'ДА' && edge.label !== 'НЕТ') {
+      backendEdge.label = edge.label;
+    }
+
+    if (edge.sourceHandle === 'true' || edge.label === 'ДА') {
+      backendEdge.data = { type: 'condition', value: true };
+    } else if (edge.sourceHandle === 'false' || edge.label === 'НЕТ') {
+      backendEdge.data = { type: 'condition', value: false };
+    }
+
+    if (edge.sourceHandle) backendEdge.sourceHandle = edge.sourceHandle;
+    if (edge.targetHandle) backendEdge.targetHandle = edge.targetHandle;
+    if (edge.style) backendEdge.style = edge.style;
+
+    return backendEdge;
+  });
+
+  return {
+    process_id: processId,
+    name,
+    nodes: backendNodes,
+    edges: backendEdges,
+  };
 }
 
 /** Тело PUT/POST в формате Clinrec (Swagger /api/v1/process). */

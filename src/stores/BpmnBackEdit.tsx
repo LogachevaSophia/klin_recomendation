@@ -116,6 +116,9 @@ export function transformBackendData(backendData: BackendData): {
       nodeData.subprocess_id = backendNode.subprocess_id;
     }
 
+    // Сохраняем числовой тип бэкенда (0 начало, 1 конец, …) для корректного PUT при сохранении
+    nodeData.backendType = backendNode.type;
+
     return {
       id: String(backendNode.id),
       type: typeMap[backendNode.type] || "action",

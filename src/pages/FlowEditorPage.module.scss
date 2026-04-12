@@ -21,7 +21,14 @@
 
 .headerActions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
+  align-items: center;
+}
+
+.saveAlert {
+  flex: 1 1 220px;
+  max-width: 480px;
 }
 
 .editorContainer {

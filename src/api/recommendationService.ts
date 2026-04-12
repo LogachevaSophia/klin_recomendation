@@ -92,4 +92,15 @@ export const recommendationService = {
   async getSubprocess(subprocessId: string): Promise<BackendData> {
     return this.getById(subprocessId);
   },
+
+  /** Сохранить граф процесса (текущая схема редактора) — PUT /v1/process */
+  async saveProcessGraph(data: BackendData): Promise<void> {
+    const body = backendDataToClinrecProcess(data);
+    await axios.put(`${API_BASE_URL}/v1/process`, body, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...bearerHeaders(),
+      },
+    });
+  },
 };
