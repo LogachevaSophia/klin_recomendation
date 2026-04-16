@@ -42,8 +42,8 @@ export interface BackendNode {
 
 export interface BackendEdge {
   id: string;
-  source: number;
-  target: number;
+  source: string;
+  target: string;
   label?: string;
   data?: {
     type?: string;

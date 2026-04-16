@@ -13,6 +13,8 @@ interface ProcessData {
     nodes: BpmnNode[];
     edges: Edge[];
     name: string;
+    /** Старый id узла → текущий id (если id меняли; рёбра могли остаться со старыми ссылками до правки) */
+    nodeIdRemap?: Map<string, string>;
 }
 
 class BpmnStore {
@@ -51,7 +53,8 @@ class BpmnStore {
                 runInAction(() => {
                     this.processes.set(subprocessId, {
                         ...transformedData,
-                        name: subprocessData.name
+                        name: subprocessData.name,
+                        nodeIdRemap: new Map(),
                     });
                 });
             } else {
@@ -66,7 +69,7 @@ class BpmnStore {
         const process = this.processes.get(this.activeProcessId);
         if (!process) {
             // Если процесс не найден, возвращаем пустой процесс вместо main
-            return { nodes: [], edges: [], name: 'Неизвестный процесс' };
+            return { nodes: [], edges: [], name: 'Неизвестный процесс', nodeIdRemap: new Map() };
         }
         return process;
     }
@@ -77,6 +80,51 @@ class BpmnStore {
 
     get initialEdges(): Edge[] {
         return this.activeProcess?.edges || [];
+    }
+
+    /** Для экспорта в Clinrec: плоский объект { старый id: новый id } */
+    get nodeIdRemapForExport(): Record<string, string> {
+        const m = this.activeProcess?.nodeIdRemap;
+        if (!m || m.size === 0) return {};
+        return Object.fromEntries(m);
+    }
+
+    /**
+     * Смена id узла: записывает пару в словарь и обновляет source/target у рёбер.
+     * Вызовите после того, как сами обновили node.id в массиве узлов, либо используйте вместе с replaceNodeId.
+     */
+    recordNodeIdChange(oldId: string, newId: string) {
+        if (oldId === newId) return;
+        runInAction(() => {
+            const currentProcess = this.processes.get(this.activeProcessId);
+            if (!currentProcess) return;
+            if (!currentProcess.nodeIdRemap) currentProcess.nodeIdRemap = new Map();
+            currentProcess.nodeIdRemap.set(oldId, newId);
+            currentProcess.edges = currentProcess.edges.map((e) => ({
+                ...e,
+                source: e.source === oldId ? newId : e.source,
+                target: e.target === oldId ? newId : e.target,
+            }));
+        });
+    }
+
+    /** Полная замена id узла: нода, словарь и рёбра */
+    replaceNodeId(oldId: string, newId: string) {
+        if (oldId === newId) return;
+        runInAction(() => {
+            const currentProcess = this.processes.get(this.activeProcessId);
+            if (!currentProcess) return;
+            if (!currentProcess.nodeIdRemap) currentProcess.nodeIdRemap = new Map();
+            currentProcess.nodeIdRemap.set(oldId, newId);
+            currentProcess.nodes = currentProcess.nodes.map((n) =>
+                n.id === oldId ? { ...n, id: newId } : n
+            );
+            currentProcess.edges = currentProcess.edges.map((e) => ({
+                ...e,
+                source: e.source === oldId ? newId : e.source,
+                target: e.target === oldId ? newId : e.target,
+            }));
+        });
     }
 
     get availableProcesses() {
@@ -206,7 +254,11 @@ class BpmnStore {
             const transformedData = transformBackendData(mainProcess);
             
             runInAction(() => {
-                this.processes.set('main', { ...transformedData, name: mainProcess.name });
+                this.processes.set('main', {
+                    ...transformedData,
+                    name: mainProcess.name,
+                    nodeIdRemap: new Map(),
+                });
                 this.activeProcessId = 'main';
             });
             
@@ -217,10 +269,11 @@ class BpmnStore {
             console.error(`Error updateMainProcess ${id}:`, error);
             // Если произошла ошибка, создаем пустой процесс
             runInAction(() => {
-                this.processes.set('main', { 
-                    nodes: [], 
-                    edges: [], 
-                    name: 'Новый процесс' 
+                this.processes.set('main', {
+                    nodes: [],
+                    edges: [],
+                    name: 'Новый процесс',
+                    nodeIdRemap: new Map(),
                 });
                 this.activeProcessId = 'main';
             });

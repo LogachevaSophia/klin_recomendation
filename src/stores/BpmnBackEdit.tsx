@@ -118,6 +118,8 @@ export function transformBackendData(backendData: BackendData): {
 
     // Сохраняем числовой тип бэкенда (0 начало, 1 конец, …) для корректного PUT при сохранении
     nodeData.backendType = backendNode.type;
+    /** Числовой id узла в Clinrec — без parseInt по UUID при сохранении рёбер */
+    nodeData.backendNumericId = backendNode.id;
 
     return {
       id: String(backendNode.id),
@@ -130,12 +132,37 @@ export function transformBackendData(backendData: BackendData): {
     };
   });
 
+  /** id узла в теле Clinrec → id строки в React Flow */
+  const backendIdToFlowId = new Map<number, string>();
+  backendData.nodes.forEach((bn) => {
+    backendIdToFlowId.set(bn.id, String(bn.id));
+  });
+
+  const nodesInApiOrder = [...backendData.nodes];
+
+  /**
+   * Конец ребра: обычно совпадает с node.id. Если бэкенд отдал source/target как 1,2,
+   * а узлы 15,16 — сопоставляем с узлами по порядку в массиве (индекс с 1).
+   */
+  function resolveEdgeEndpoint(ref: number): string {
+    if (Number.isFinite(ref) && backendIdToFlowId.has(ref)) {
+      return backendIdToFlowId.get(ref)!;
+    }
+    const i = Math.floor(ref) - 1;
+    if (Number.isInteger(ref) && i >= 0 && i < nodesInApiOrder.length) {
+      return String(nodesInApiOrder[i].id);
+    }
+    return String(ref);
+  }
+
   // Преобразование соединений
   const edges: Edge[] = backendData.edges.map((backendEdge) => {
+    const srcNum = Number(backendEdge.source);
+    const tgtNum = Number(backendEdge.target);
     const edge: any = {
       id: backendEdge.id,
-      source: String(backendEdge.source),
-      target: String(backendEdge.target),
+      source: resolveEdgeEndpoint(srcNum),
+      target: resolveEdgeEndpoint(tgtNum),
     };
 
     // Обработка condition edges: если data.type === 'condition', устанавливаем sourceHandle, label и style

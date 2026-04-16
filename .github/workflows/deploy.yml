@@ -32,6 +32,8 @@ jobs:
           tags: klin-recomendation:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
 
       - name: Save Docker image
         run: |

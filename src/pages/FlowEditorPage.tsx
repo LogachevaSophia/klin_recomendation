@@ -28,11 +28,14 @@ export const FlowEditorPage: React.FC = observer(() => {
     setSaveMessage(null);
     const nodes = toJS(bpmnStore.initialNodes);
     const edges = toJS(bpmnStore.initialEdges);
+    console.log('edges',edges)
+    console.log('nodes',nodes)
     const backendData = flowEditorStateToBackendData(
       nodes,
       edges,
       id,
-      recommendation?.title || 'Новый процесс'
+      recommendation?.title || 'Новый процесс',
+      bpmnStore.nodeIdRemapForExport
     );
 
     const jsonString = JSON.stringify(backendData, null, 2);
