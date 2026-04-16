@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { recommendationStore } from '../../stores/recommendationStore';
 import { Button, Card, Spin, Alert, Modal, Select } from '@gravity-ui/uikit';
 import { RecommendationForm } from './RecommendationForm';
-import { RecommendationResponse } from '../../api/types';
+import type { DomainProcess } from '../../api/clinrecProcessMapper';
 import styles from './Recommendations.module.scss';
 
 export const Recommendations = observer(() => {
   const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
-  const [selectedRecommendation, setSelectedRecommendation] = useState<RecommendationResponse | undefined>();
+  const [selectedRecommendation, setSelectedRecommendation] = useState<DomainProcess | undefined>();
   const [comparisonProcess1, setComparisonProcess1] = useState<string>('');
   const [comparisonProcess2, setComparisonProcess2] = useState<string>('');
 
@@ -32,17 +32,18 @@ export const Recommendations = observer(() => {
     }
   };
 
-  const handleEdit = (recommendation: RecommendationResponse) => {
+  const handleEdit = (recommendation: DomainProcess) => {
     setSelectedRecommendation(recommendation);
     setIsFormOpen(true);
   };
 
-  const handleOpenFlowEditor = (recommendation: RecommendationResponse) => {
-    window.open(`/flow-editor/${recommendation.process_id}`, '_blank');
+  const handleOpenFlowEditor = (recommendation: DomainProcess) => {
+    const pid = recommendation.process_id || recommendation.id || '';
+    window.open(`/flow-editor/${pid}`, '_blank');
   };
 
-  const handleOpenExecution = (recommendation: RecommendationResponse) => {
-    navigate(`/execution/${recommendation.process_id}`);
+  const handleOpenExecution = (recommendation: DomainProcess) => {
+    navigate(`/execution/${recommendation.process_id || recommendation.id || ''}`);
   };
 
   const handleCloseForm = () => {
@@ -107,16 +108,25 @@ export const Recommendations = observer(() => {
 
       <div className={styles.recommendationGrid}>
         {recommendationStore.recommendations.map((recommendation) => (
-          <Card key={recommendation.process_id} className={styles.recommendationCard}>
+          <Card
+            key={recommendation.process_id || recommendation.id || ''}
+            className={styles.recommendationCard}
+          >
             <div className={styles.cardHeader}>
               <h3>{recommendation.name}</h3>
-              <span className={styles[`priority-${recommendation.priority}`]}>
-                {recommendation.priority}
-              </span>
+              {recommendation.priority != null && (
+                <span className={styles[`priority-${recommendation.priority}`]}>
+                  {recommendation.priority}
+                </span>
+              )}
             </div>
-            <p>{recommendation.description}</p>
+            {recommendation.description != null && recommendation.description !== '' && (
+              <p>{recommendation.description}</p>
+            )}
             <div className={styles.cardFooter}>
-              <span className={styles.category}>{recommendation.category}</span>
+              {recommendation.category != null && recommendation.category !== '' && (
+                <span className={styles.category}>{recommendation.category}</span>
+              )}
               <div className={styles.actions}>
                 <Button
                   view="action"
@@ -142,7 +152,11 @@ export const Recommendations = observer(() => {
                 <Button
                   view="outlined"
                   size="s"
-                  onClick={() => recommendationStore.deleteRecommendation(recommendation.process_id)}
+                  onClick={() =>
+                    recommendationStore.deleteRecommendation(
+                      recommendation.process_id || recommendation.id || '',
+                    )
+                  }
                 >
                   Delete
                 </Button>

@@ -1,9 +1,10 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { recommendationService } from '../api/recommendationService';
-import type { RecommendationResponse, CreateRecommendationRequest, UpdateRecommendationRequest } from '../api/types';
+import type { CreateRecommendationRequest, UpdateRecommendationRequest } from '../api/types';
+import type { DomainProcess } from '../api/clinrecProcessMapper';
 
 class RecommendationStore {
-  recommendations: RecommendationResponse[] = [];
+  recommendations: DomainProcess[] = [];
   loading = false;
   error: string | null = null;
 
@@ -54,7 +55,7 @@ class RecommendationStore {
       this.loading = true;
       const updatedRecommendation = await recommendationService.update(data);
       runInAction(() => {
-        const index = this.recommendations.findIndex(r => r.id === data.id);
+        const index = this.recommendations.findIndex(r => (r.process_id || r.id) === data.id);
         if (index !== -1) {
           this.recommendations[index] = updatedRecommendation;
         }
@@ -76,7 +77,9 @@ class RecommendationStore {
       this.loading = true;
       await recommendationService.delete(id);
       runInAction(() => {
-        this.recommendations = this.recommendations.filter(r => r.id !== id);
+        this.recommendations = this.recommendations.filter(
+          r => (r.process_id || r.id) !== id,
+        );
         this.error = null;
       });
     } catch (error) {

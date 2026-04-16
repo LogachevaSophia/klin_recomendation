@@ -1,13 +1,11 @@
 import axios from 'axios';
 import {
-  RecommendationResponse,
   CreateRecommendationRequest,
   UpdateRecommendationRequest,
   BackendData,
 } from './types';
 import {
   domainProcessToBackendData,
-  domainProcessToRecommendation,
   normalizeProcessList,
   backendDataToClinrecProcess,
   type DomainProcess,
@@ -37,10 +35,12 @@ async function fetchDomainProcess(processId: string): Promise<DomainProcess> {
 }
 
 export const recommendationService = {
-  async getAll(): Promise<RecommendationResponse[]> {
+  /** Список как от бэкенда (после нормализации вложенного массива в `normalizeProcessList`). */
+  async getAll(): Promise<DomainProcess[]> {
     const { data } = await axios.get(`${API_BASE_URL}/v1/process/all`);
     const list = normalizeProcessList(data);
-    return list.map(domainProcessToRecommendation);
+    return list;
+    // return list.map(domainProcessToRecommendation);
   },
 
   async getById(id: string): Promise<BackendData> {
@@ -48,7 +48,7 @@ export const recommendationService = {
     return domainProcessToBackendData(domain);
   },
 
-  async create(data: CreateRecommendationRequest): Promise<RecommendationResponse> {
+  async create(data: CreateRecommendationRequest): Promise<DomainProcess> {
     const body = {
       name: data.title,
       nodes: [] as unknown[],
@@ -60,10 +60,10 @@ export const recommendationService = {
         ...bearerHeaders(),
       },
     });
-    return domainProcessToRecommendation(normalizeDomain(created));
+    return normalizeDomain(created);
   },
 
-  async update(data: UpdateRecommendationRequest): Promise<RecommendationResponse> {
+  async update(data: UpdateRecommendationRequest): Promise<DomainProcess> {
     const backend = await this.getById(data.id);
     const merged: BackendData = {
       ...backend,
@@ -73,14 +73,12 @@ export const recommendationService = {
     await axios.put(`${API_BASE_URL}/v1/process`, body, {
       headers: { 'Content-Type': 'application/json' },
     });
-    return {
-      id: data.id,
-      title: merged.name,
-      description: data.description ?? '',
-      category: data.category ?? 'general',
-      priority: data.priority ?? 'medium',
-      createdAt: new Date().toISOString(),
-    };
+    return normalizeDomain({
+      process_id: data.id,
+      name: merged.name,
+      nodes: merged.nodes as unknown[],
+      edges: merged.edges as unknown[],
+    });
   },
 
   async delete(id: string): Promise<void> {

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Button, TextInput, Select, TextArea } from '@gravity-ui/uikit';
-import { CreateRecommendationRequest, RecommendationResponse } from '../../api/types';
+import { CreateRecommendationRequest } from '../../api/types';
+import type { DomainProcess } from '../../api/clinrecProcessMapper';
 import styles from './RecommendationForm.module.scss';
 
 interface RecommendationFormProps {
-  initialData?: RecommendationResponse;
+  initialData?: DomainProcess;
   onSubmit: (data: CreateRecommendationRequest) => Promise<void>;
   onCancel: () => void;
 }
@@ -21,7 +22,7 @@ export const RecommendationForm: React.FC<RecommendationFormProps> = ({
   onCancel,
 }) => {
   const [formData, setFormData] = useState<CreateRecommendationRequest>({
-    title: initialData?.title || '',
+    title: initialData?.name || '',
     description: initialData?.description || '',
     category: initialData?.category || '',
     priority: initialData?.priority || 'low',

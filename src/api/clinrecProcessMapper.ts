@@ -13,8 +13,12 @@ export interface DomainProcess {
   /** Некоторые ответы бэкенда используют только process_id */
   process_id?: string;
   name?: string;
-  nodes?: DomainNode[];
-  edges?: DomainEdge[];
+  nodes?: DomainNode[] | null;
+  edges?: DomainEdge[] | null;
+  /** Не во всех ответах Clinrec есть; UI опционально */
+  description?: string;
+  category?: string;
+  priority?: 'low' | 'medium' | 'high';
 }
 
 export interface DomainNode {
@@ -296,17 +300,5 @@ export function backendDataToClinrecProcess(b: BackendData): Record<string, unkn
       if (e.style) out.style = e.style;
       return out;
     }),
-  };
-}
-
-export function domainProcessToRecommendation(p: DomainProcess): RecommendationResponse {
-  const pid = p.id || p.process_id || '';
-  return {
-    id: pid,
-    title: p.name || '',
-    description: '',
-    category: 'general',
-    priority: 'medium',
-    createdAt: new Date().toISOString(),
   };
 }
