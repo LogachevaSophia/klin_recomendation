@@ -26,7 +26,7 @@ export const Recommendations = observer(() => {
 
   const handleUpdate = async (data: any) => {
     if (selectedRecommendation) {
-      await recommendationStore.updateRecommendation({ ...data, id: selectedRecommendation.id });
+      await recommendationStore.updateRecommendation({ ...data, id: selectedRecommendation.process_id });
       setIsFormOpen(false);
       setSelectedRecommendation(undefined);
     }
@@ -38,11 +38,11 @@ export const Recommendations = observer(() => {
   };
 
   const handleOpenFlowEditor = (recommendation: RecommendationResponse) => {
-    window.open(`/flow-editor/${recommendation.id}`, '_blank');
+    window.open(`/flow-editor/${recommendation.process_id}`, '_blank');
   };
 
   const handleOpenExecution = (recommendation: RecommendationResponse) => {
-    navigate(`/execution/${recommendation.id}`);
+    navigate(`/execution/${recommendation.process_id}`);
   };
 
   const handleCloseForm = () => {
@@ -107,9 +107,9 @@ export const Recommendations = observer(() => {
 
       <div className={styles.recommendationGrid}>
         {recommendationStore.recommendations.map((recommendation) => (
-          <Card key={recommendation.id} className={styles.recommendationCard}>
+          <Card key={recommendation.process_id} className={styles.recommendationCard}>
             <div className={styles.cardHeader}>
-              <h3>{recommendation.title}</h3>
+              <h3>{recommendation.name}</h3>
               <span className={styles[`priority-${recommendation.priority}`]}>
                 {recommendation.priority}
               </span>
@@ -142,7 +142,7 @@ export const Recommendations = observer(() => {
                 <Button
                   view="outlined"
                   size="s"
-                  onClick={() => recommendationStore.deleteRecommendation(recommendation.id)}
+                  onClick={() => recommendationStore.deleteRecommendation(recommendation.process_id)}
                 >
                   Delete
                 </Button>
@@ -178,8 +178,8 @@ export const Recommendations = observer(() => {
                 value={[comparisonProcess1]}
                 onUpdate={(value) => setComparisonProcess1(value[0])}
                 options={recommendationStore.recommendations.map(rec => ({
-                  value: rec.id,
-                  content: rec.title
+                  value: rec.process_id,
+                  content: rec.name
                 }))}
                 placeholder="Выберите первый процесс"
               />
@@ -191,10 +191,10 @@ export const Recommendations = observer(() => {
                 value={[comparisonProcess2]}
                 onUpdate={(value) => setComparisonProcess2(value[0])}
                 options={recommendationStore.recommendations
-                  .filter(rec => rec.id !== comparisonProcess1)
+                  .filter(rec => rec.process_id !== comparisonProcess1)
                   .map(rec => ({
-                    value: rec.id,
-                    content: rec.title
+                    value: rec.process_id,
+                    content: rec.name
                   }))}
                 placeholder="Выберите второй процесс"
               />

@@ -1,8 +1,8 @@
 // import { Edge, Node } from "@xyflow/react";
 
 export interface RecommendationResponse {
-  id: string;
-  title: string;
+  process_id: string;
+  name: string;
   description: string;
   category: string;
   priority: 'low' | 'medium' | 'high';
