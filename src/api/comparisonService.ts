@@ -1,13 +1,12 @@
-import axios from 'axios';
 import { ProcessComparison } from './comparisonTypes';
-
-/** Базовый URL бэкенда (из браузера), не origin статики фронта */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+import { apiClient } from './apiClient';
 
 export const comparisonService = {
   async compare(processId1: string, processId2: string): Promise<ProcessComparison> {
-    const response = await axios.get(`${API_BASE_URL}/compare/${processId1}/${processId2}`);
-    return response.data;
-  }
+    const { data } = await apiClient.get<ProcessComparison>(
+      `/compare/${processId1}/${processId2}`,
+    );
+    return data;
+  },
 };
 

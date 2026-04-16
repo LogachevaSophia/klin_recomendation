@@ -19,6 +19,17 @@
 .headerActions {
   display: flex;
   gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.userEmail {
+  font-size: 14px;
+  color: var(--g-color-text-secondary);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .recommendationGrid {

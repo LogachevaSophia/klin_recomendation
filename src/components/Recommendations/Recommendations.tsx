@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { recommendationStore } from '../../stores/recommendationStore';
+import { authStore } from '../../stores/authStore';
+import { hasPermission } from '../../utils/permissions';
 import { Button, Card, Spin, Alert, Modal, Select } from '@gravity-ui/uikit';
 import { RecommendationForm } from './RecommendationForm';
 import type { DomainProcess } from '../../api/clinrecProcessMapper';
@@ -9,6 +11,11 @@ import styles from './Recommendations.module.scss';
 
 export const Recommendations = observer(() => {
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    authStore.logout();
+    navigate('/login', { replace: true });
+  };
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
   const [selectedRecommendation, setSelectedRecommendation] = useState<DomainProcess | undefined>();
@@ -91,18 +98,25 @@ export const Recommendations = observer(() => {
       <div className={styles.header}>
         <h1>Recommendations</h1>
         <div className={styles.headerActions}>
+          {authStore.user && (
+            <span className={styles.userEmail} title={authStore.user.email}>
+              {authStore.user.email}
+            </span>
+          )}
+          <Button view="outlined" onClick={handleLogout}>
+            Выйти
+          </Button>
           <Button
             view="outlined"
             onClick={handleOpenComparison}
           >
             Сравнить процессы
           </Button>
-          <Button
-            view="action"
-            onClick={() => setIsFormOpen(true)}
-          >
-            Add Recommendation
-          </Button>
+          {hasPermission('create', 'process') && (
+            <Button view="action" onClick={() => setIsFormOpen(true)}>
+              Add Recommendation
+            </Button>
+          )}
         </div>
       </div>
 
@@ -149,17 +163,19 @@ export const Recommendations = observer(() => {
                 >
                   Edit
                 </Button>
-                <Button
-                  view="outlined"
-                  size="s"
-                  onClick={() =>
-                    recommendationStore.deleteRecommendation(
-                      recommendation.process_id || recommendation.id || '',
-                    )
-                  }
-                >
-                  Delete
-                </Button>
+                {hasPermission('delete', 'process') && (
+                  <Button
+                    view="outlined"
+                    size="s"
+                    onClick={() =>
+                      recommendationStore.deleteRecommendation(
+                        recommendation.process_id || recommendation.id || '',
+                      )
+                    }
+                  >
+                    Delete
+                  </Button>
+                )}
               </div>
             </div>
           </Card>

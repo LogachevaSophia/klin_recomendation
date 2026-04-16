@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   CreateRecommendationRequest,
   UpdateRecommendationRequest,
@@ -10,15 +9,7 @@ import {
   backendDataToClinrecProcess,
   type DomainProcess,
 } from './clinrecProcessMapper';
-
-/** Базовый URL бэкенда (из браузера), не origin статики фронта */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
-
-function bearerHeaders(): Record<string, string> {
-  const token = import.meta.env.VITE_CLINREC_API_TOKEN as string | undefined;
-  if (!token) return {};
-  return { Authorization: `Bearer ${token}` };
-}
+import { apiClient } from './apiClient';
 
 function normalizeDomain(raw: unknown): DomainProcess {
   if (!raw || typeof raw !== 'object') return {};
@@ -28,7 +19,7 @@ function normalizeDomain(raw: unknown): DomainProcess {
 }
 
 async function fetchDomainProcess(processId: string): Promise<DomainProcess> {
-  const { data } = await axios.get(`${API_BASE_URL}/v1/process`, {
+  const { data } = await apiClient.get('/v1/process', {
     params: { process_id: processId },
   });
   return normalizeDomain(data);
@@ -37,7 +28,7 @@ async function fetchDomainProcess(processId: string): Promise<DomainProcess> {
 export const recommendationService = {
   /** Список как от бэкенда (после нормализации вложенного массива в `normalizeProcessList`). */
   async getAll(): Promise<DomainProcess[]> {
-    const { data } = await axios.get(`${API_BASE_URL}/v1/process/all`);
+    const { data } = await apiClient.get('/v1/process/all');
     const list = normalizeProcessList(data);
     return list;
     // return list.map(domainProcessToRecommendation);
@@ -54,12 +45,7 @@ export const recommendationService = {
       nodes: [] as unknown[],
       edges: [] as unknown[],
     };
-    const { data: created } = await axios.post(`${API_BASE_URL}/v1/process`, body, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...bearerHeaders(),
-      },
-    });
+    const { data: created } = await apiClient.post('/v1/process', body);
     return normalizeDomain(created);
   },
 
@@ -70,9 +56,7 @@ export const recommendationService = {
       name: data.title != null && data.title !== '' ? data.title : backend.name,
     };
     const body = backendDataToClinrecProcess(merged);
-    await axios.put(`${API_BASE_URL}/v1/process`, body, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    await apiClient.put('/v1/process', body);
     return normalizeDomain({
       process_id: data.id,
       name: merged.name,
@@ -82,7 +66,7 @@ export const recommendationService = {
   },
 
   async delete(id: string): Promise<void> {
-    await axios.delete(`${API_BASE_URL}/v1/process`, {
+    await apiClient.delete('/v1/process', {
       params: { process_id: id },
     });
   },
@@ -94,11 +78,6 @@ export const recommendationService = {
   /** Сохранить граф процесса (текущая схема редактора) — PUT /v1/process */
   async saveProcessGraph(data: BackendData): Promise<void> {
     const body = backendDataToClinrecProcess(data);
-    await axios.put(`${API_BASE_URL}/v1/process`, body, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...bearerHeaders(),
-      },
-    });
+    await apiClient.put('/v1/process', body);
   },
 };

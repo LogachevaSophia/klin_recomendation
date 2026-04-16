@@ -52,6 +52,7 @@ export const SideBar = observer(() => {
                 attributes: attributes
             }
         };
+        console.log('newNode', newNode);
 
         bpmnStore.addNewNode(newNode);
         setNewNameNode(undefined);
