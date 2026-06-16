@@ -23,6 +23,19 @@ export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, s
     const [attributeValue, setAttributeValue] = useState<string>('');
     const [attributesProps, setAttributes] = useState<Attribute[]>([]);
 
+    const medications = [
+        {id: 1, name: 'Аспирин'},
+        {id: 2, name: 'Нурофен'},
+        {id: 3, name: 'Анальгин'},
+        {id: 4, name: 'Парацетамол'},
+        {id: 5, name: 'Ибупрофен'},
+        {id: 6, name: 'Нурофен'},
+        {id: 7, name: 'Анальгин'},
+        {id: 8, name: 'Парацетамол'},
+        {id: 9, name: 'Ибупрофен'},
+    ]
+
+
     // Обновляем локальное состояние при изменении входных атрибутов
     useEffect(() => {
         setAttributes(attributes || []);
@@ -43,6 +56,10 @@ export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, s
             setAttributeValue('');
         }
     };
+
+    const handleAddMedication = () => {
+        
+    }
 
     const handleSave = () => {
         if (!onSave) return
@@ -105,6 +122,9 @@ export const ModalAddNode: React.FC<AttributeModalProps> = observer(({ isOpen, s
                     />
                     <Button onClick={handleAddAttribute}>
                         Добавить атрибут
+                    </Button>
+                    <Button onClick={handleAddMedication}>
+                        Добавить препарат
                     </Button>
                 </div>
                 <div className={styles.actions}>

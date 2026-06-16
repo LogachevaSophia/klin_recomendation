@@ -44,10 +44,8 @@ describe('ConditionEvaluator', () => {
     expect(ConditionEvaluator.evaluate('@@@invalid@@@', ctx)).toBe(false);
   });
 
-  it('supports symptoms.includes pattern when symptoms is array', () => {
-    const ctx = makeContext({ symptoms: ['кашель', 'озноб'] });
-    expect(
-      ConditionEvaluator.evaluate("symptoms && symptoms.includes('кашель')", ctx)
-    ).toBe(true);
+  it('supports logical AND between fields', () => {
+    const ctx = makeContext({ age: 25, temperature: 38 });
+    expect(ConditionEvaluator.evaluate('age > 18 && temperature > 37', ctx)).toBe(true);
   });
 });

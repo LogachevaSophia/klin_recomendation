@@ -1,4 +1,5 @@
 .custom.condition{
+    position: relative;
     width: 90px;
     height: 90px;
     transform: rotate(45deg);
@@ -28,10 +29,46 @@
     }
 }
 
+.branchLabelYes,
+.branchLabelNo {
+    position: absolute;
+    font-size: 9px;
+    font-weight: 700;
+    pointer-events: none;
+    transform: rotate(-45deg);
+    z-index: 1;
+}
+
+.branchLabelYes {
+    top: 2px;
+    right: 2px;
+    color: #16a34a;
+}
+
+.branchLabelNo {
+    bottom: 2px;
+    right: 2px;
+    color: #dc2626;
+}
+
 /* Стили для handles */
 :global(.condition-handle) {
     background: #9ca3af;
     border: 2px solid white;
     width: 12px;
     height: 12px;
+}
+
+:global(.condition-handle-input) {
+    top: 50% !important;
+}
+
+:global(.condition-handle-true) {
+    background: #16a34a;
+    transform: translate(50%, -50%);
+}
+
+:global(.condition-handle-false) {
+    background: #dc2626;
+    transform: translate(50%, 50%);
 }

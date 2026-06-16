@@ -1,23 +1,30 @@
 import type { LoginResponse, Permission, RegisterResponse } from './authTypes';
-import { persistPermissions, persistSession } from './authStorage';
+import { persistSession } from './authStorage';
 import { apiClient } from './apiClient';
 import { authHttp } from './authHttp';
 
-export async function fetchAndStoreUserPermissions(userId: string): Promise<void> {
+export async function fetchUserPermissions(userId: string): Promise<Permission[]> {
+  console.log('[auth] fetchUserPermissions request', { userId, path: `/users/${userId}/permissions` });
   const { data } = await apiClient.get<{ permissions?: Permission[] }>(
     `/users/${userId}/permissions`,
   );
-  persistPermissions(data.permissions ?? []);
+  const raw = data.permissions ?? [];
+  const list = raw.filter(
+    (p): p is Permission =>
+      p != null &&
+      typeof p === 'object' &&
+      typeof p.action === 'string' &&
+      typeof p.resource === 'string',
+  );
+  console.log('[auth] fetchUserPermissions response', { userId, count: list.length, rawLength: raw.length });
+  return list;
 }
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
+  console.log('[auth] login request');
   const { data } = await authHttp.post<LoginResponse>('/login', { email, password });
   persistSession(data);
-  try {
-    await fetchAndStoreUserPermissions(data.user.id);
-  } catch {
-    persistPermissions([]);
-  }
+  console.log('[auth] login ok', { userId: data.user?.id, email: data.user?.email });
   return data;
 }
 
@@ -27,10 +34,12 @@ export async function register(
   firstName?: string,
   lastName?: string,
 ): Promise<RegisterResponse> {
+  console.log('[auth] register request', { email });
   const body: Record<string, unknown> = { email, password };
   if (firstName?.trim()) body.first_name = firstName.trim();
   if (lastName?.trim()) body.last_name = lastName.trim();
   const { data } = await authHttp.post<RegisterResponse>('/users', body);
+  console.log('[auth] register ok', { id: data.id, email: data.email });
   return data;
 }
 

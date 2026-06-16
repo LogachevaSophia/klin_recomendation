@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Покрытие автотестами — клинические рекомендации</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; background: #f8f9fa; }
+    h1 { color: #1a1a2e; }
+    table { border-collapse: collapse; width: 100%; background: #fff; margin: 1rem 0; }
+    th, td { border: 1px solid #dee2e6; padding: 0.6rem 1rem; text-align: left; }
+    th { background: #e9ecef; }
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1200px; }
+    canvas { background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  </style>
+</head>
+<body>
+  <h1>Покрытие автотестами микросервисной МИС</h1>
+  <p>Сгенерировано: 28.05.2026, 00:20:50</p>
+
+  <table>
+    <thead>
+      <tr><th>Система</th><th>Lines</th><th>Statements</th><th>Functions</th><th>Branches</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Редактор схем клинических рекомендаций (klin-rec)</td><td>95.4%</td><td>85.9%</td><td>97.6%</td><td>67.9%</td></tr><tr><td>Стратегии промптинга для сравнения графов</td><td>77.3%</td><td>76.6%</td><td>83.0%</td><td>62.2%</td></tr><tr><td>Движок исполнения визуальных алгоритмов</td><td>47.0%</td><td>46.7%</td><td>55.3%</td><td>34.5%</td></tr><tr><td>IAM / API Gateway (iam-service)</td><td>61.3%</td><td>59.8%</td><td>56.1%</td><td>55.0%</td></tr>
+    </tbody>
+  </table>
+
+  <div class="charts">
+    <canvas id="barChart"></canvas>
+    <canvas id="radarChart"></canvas>
+  </div>
+
+  <script>
+    const labels = ["Редактор схем клинических рекомендаций (klin-rec)","Стратегии промптинга для сравнения графов","Движок исполнения визуальных алгоритмов","IAM / API Gateway (iam-service)"];
+    const lines = [95.41,77.315,47.02666666666667,61.34];
+    const stmts = [85.87,76.595,46.72666666666667,59.75];
+    const funcs = [97.61500000000001,82.95,55.31,56.09];
+    const branches = [67.89,62.16,34.51,55.03];
+
+    new Chart(document.getElementById('barChart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Lines', data: lines, backgroundColor: '#4361ee' },
+          { label: 'Statements', data: stmts, backgroundColor: '#3a86ff' },
+          { label: 'Functions', data: funcs, backgroundColor: '#06d6a0' },
+          { label: 'Branches', data: branches, backgroundColor: '#ffd166' },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { title: { display: true, text: 'Покрытие по системам (%)' } },
+        scales: { y: { beginAtZero: true, max: 100 } },
+      },
+    });
+
+    new Chart(document.getElementById('radarChart'), {
+      type: 'radar',
+      data: {
+        labels: ['Lines', 'Statements', 'Functions', 'Branches'],
+        datasets: labels.map((name, i) => ({
+          label: name.slice(0, 30),
+          data: [lines[i], stmts[i], funcs[i], branches[i]],
+          fill: true,
+          opacity: 0.2,
+        })),
+      },
+      options: {
+        responsive: true,
+        plugins: { title: { display: true, text: 'Профиль покрытия' } },
+        scales: { r: { beginAtZero: true, max: 100 } },
+      },
+    });
+  </script>
+</body>
+</html>

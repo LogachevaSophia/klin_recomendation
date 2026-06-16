@@ -24,10 +24,12 @@ export const Recommendations = observer(() => {
 
   useEffect(() => {
     recommendationStore.fetchRecommendations();
+    void authStore.refreshPermissions();
   }, []);
 
   const handleCreate = async (data: any) => {
     await recommendationStore.createRecommendation(data);
+    recommendationStore.fetchRecommendations();
     setIsFormOpen(false);
   };
 
@@ -73,7 +75,7 @@ export const Recommendations = observer(() => {
       navigate(`/compare?process1=${comparisonProcess1}&process2=${comparisonProcess2}`);
     }
   };
-
+  console.log('recommendationStore.recommendations', recommendationStore.recommendations)
   if (recommendationStore.loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -121,6 +123,7 @@ export const Recommendations = observer(() => {
       </div>
 
       <div className={styles.recommendationGrid}>
+        
         {recommendationStore.recommendations.map((recommendation) => (
           <Card
             key={recommendation.process_id || recommendation.id || ''}

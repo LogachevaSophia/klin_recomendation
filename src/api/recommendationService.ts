@@ -29,6 +29,7 @@ export const recommendationService = {
   /** Список как от бэкенда (после нормализации вложенного массива в `normalizeProcessList`). */
   async getAll(): Promise<DomainProcess[]> {
     const { data } = await apiClient.get('/v1/process/all');
+    console.log('data', data);
     const list = normalizeProcessList(data);
     return list;
     // return list.map(domainProcessToRecommendation);

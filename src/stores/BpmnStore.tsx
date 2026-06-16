@@ -175,6 +175,14 @@ class BpmnStore {
             if (currentProcess) {
                 currentProcess.nodes = [...currentProcess.nodes, data];
             }
+            if (data.type === 'subprocess') {
+                this.processes.set(data.id, {
+                    nodes: [],
+                    edges: [],
+                    name: data.data.label,
+                    nodeIdRemap: new Map(),
+                });
+            }
         });
     }
 
@@ -190,13 +198,31 @@ class BpmnStore {
     deleteNode = (nodeId: string) => {
         runInAction(() => {
             const currentProcess = this.processes.get(this.activeProcessId);
-            if (currentProcess) {
-                // Удаляем ноду
-                currentProcess.nodes = currentProcess.nodes.filter(node => node.id !== nodeId);
-                // Удаляем связанные рёбра
-                currentProcess.edges = currentProcess.edges.filter(
-                    edge => edge.source !== nodeId && edge.target !== nodeId
-                );
+            if (!currentProcess) return;
+
+            const nodeToDelete = currentProcess.nodes.find(node => node.id === nodeId);
+
+            currentProcess.nodes = currentProcess.nodes.filter(node => node.id !== nodeId);
+            currentProcess.edges = currentProcess.edges.filter(
+                edge => edge.source !== nodeId && edge.target !== nodeId
+            );
+
+            if (nodeToDelete?.type === 'subprocess') {
+                const subprocessKeys = new Set<string>([nodeId]);
+                const subprocessId = nodeToDelete.data?.subprocess_id;
+                if (subprocessId) {
+                    subprocessKeys.add(subprocessId);
+                }
+
+                for (const key of subprocessKeys) {
+                    if (key !== 'main') {
+                        this.processes.delete(key);
+                    }
+                }
+
+                if (subprocessKeys.has(this.activeProcessId)) {
+                    this.activeProcessId = 'main';
+                }
             }
         });
     };

@@ -17,6 +17,7 @@ export const ChoiceItem: React.FC<{svg: React.ReactNode, type: TypesChoiceItem, 
 
     const handleClick = () => {
         action(type, text); // Передаём type и text в функцию
+        setText("");
       };
 
     const handleDragStart = (event: React.DragEvent) => {

@@ -16,28 +16,34 @@ export const apiClient = axios.create({
   },
 });
 
+// Auth token temporarily disabled — auth backend not connected
 apiClient.interceptors.request.use((config) => {
-  const token = resolveBearerToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  // const token = resolveBearerToken();
+  // if (token) {
+  //   config.headers.Authorization = `Bearer ${token}`;
+  // }
   return config;
 });
 
+// Auth redirect temporarily disabled — auth backend not connected
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      const hadAuth = Boolean(error.config?.headers?.Authorization);
-      if (hadAuth) {
-        clearSession();
-        const { authStore } = await import('../stores/authStore');
-        authStore.clearSessionState();
-        if (!window.location.pathname.startsWith('/login')) {
-          window.location.assign('/login');
-        }
-      }
-    }
+    // if (axios.isAxiosError(error) && error.response?.status === 401) {
+    //   console.log('[auth] apiClient 401', {
+    //     url: error.config?.url,
+    //     baseURL: error.config?.baseURL,
+    //   });
+    //   const hadAuth = Boolean(error.config?.headers?.Authorization);
+    //   if (hadAuth) {
+    //     clearSession();
+    //     const { authStore } = await import('../stores/authStore');
+    //     authStore.clearSessionState();
+    //     if (!window.location.pathname.startsWith('/login')) {
+    //       window.location.assign('/login');
+    //     }
+    //   }
+    // }
     return Promise.reject(error);
   },
 );

@@ -17,3 +17,12 @@
 .choice > * {
     margin: 0;
 }
+
+.tabs {
+    overflow-x:scroll;
+}
+
+.tabs > div {
+    overflow-x: scroll;
+    flex-wrap: nowrap;
+}

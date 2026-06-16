@@ -10,23 +10,28 @@ export const ConditionNode: React.FC = ({ data }: any) => {
                 <strong>{data.label || 'Condition'}</strong>
             </div>
 
+            <span className={styles.branchLabelYes}>ДА</span>
+            <span className={styles.branchLabelNo}>НЕТ</span>
+
             <Handle
                 type="target"
                 position={Position.Left}
                 id="input"
-                className="condition-handle"
+                className="condition-handle condition-handle-input"
             />
             <Handle
                 type="source"
-                position={Position.Right}
+                position={Position.Top}
                 id="true"
-                className="condition-handle"
+                className="condition-handle condition-handle-true"
+                style={{ left: '100%' }}
             />
             <Handle
                 type="source"
                 position={Position.Bottom}
                 id="false"
-                className="condition-handle"
+                className="condition-handle condition-handle-false"
+                style={{ left: '100%' }}
             />
         </div>
     )

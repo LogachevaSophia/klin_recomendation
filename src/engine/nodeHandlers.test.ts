@@ -1,9 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   NodeHandlerFactory,
   StartNodeHandler,
   FinishNodeHandler,
   ActionNodeHandler,
+  ConditionNodeHandler,
 } from './nodeHandlers';
 import type { BpmnEdge, BpmnNode } from '../api/types';
 import type { ExecutionContext } from './types';
@@ -74,5 +75,94 @@ describe('ActionNodeHandler', () => {
     const edges: BpmnEdge[] = [{ id: 'e1', source: 'a1', target: 'a2' }];
     const out = await handler.execute(node, ctx(), edges);
     expect(out.nextNodeId).toBe('a2');
+  });
+
+  it('updates patient data from patient.* attributes', async () => {
+    const handler = new ActionNodeHandler();
+    const context = ctx({ age: 50 });
+    const node: BpmnNode = {
+      id: 'a1',
+      type: 'action',
+      position: { x: 0, y: 0 },
+      data: {
+        label: 'Обновить',
+        attributes: [{ name: 'patient.systolicBP', value: '145' }],
+      },
+    } as BpmnNode;
+    const edges: BpmnEdge[] = [{ id: 'e1', source: 'a1', target: 'a2' }];
+    await handler.execute(node, context, edges);
+    expect(context.patientData.systolicBP).toBe(145);
+  });
+
+  it('pauses when require: field is missing', async () => {
+    const handler = new ActionNodeHandler();
+    const node: BpmnNode = {
+      id: 'a1',
+      type: 'action',
+      position: { x: 0, y: 0 },
+      data: {
+        label: 'Ввод',
+        attributes: [{ name: 'require:systolicBP', value: 'Введите АД' }],
+      },
+    } as BpmnNode;
+    const out = await handler.execute(node, ctx(), []);
+    expect(out.shouldContinue).toBe(false);
+    expect(out.result?.requiresData).toBe(true);
+  });
+});
+
+describe('ConditionNodeHandler', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  it('routes to true branch when comparison passes', async () => {
+    const handler = new ConditionNodeHandler();
+    const node: BpmnNode = {
+      id: 'c1',
+      type: 'condition',
+      position: { x: 0, y: 0 },
+      data: {
+        label: 'АД > 140',
+        attributes: [
+          { name: 'inputField', value: 'systolicBP' },
+          { name: 'inputType', value: 'number' },
+          { name: 'compareOperator', value: '>' },
+          { name: 'compareValue', value: '140' },
+        ],
+      },
+    } as BpmnNode;
+    const edges: BpmnEdge[] = [
+      { id: 'e-yes', source: 'c1', target: 'yes-node', sourceHandle: 'true' },
+      { id: 'e-no', source: 'c1', target: 'no-node', sourceHandle: 'false' },
+    ];
+    const out = await handler.execute(node, ctx({ systolicBP: 150 }), edges);
+    expect(out.conditionResult).toBe(true);
+    expect(out.nextNodeId).toBe('yes-node');
+  });
+
+  it('routes to false branch when comparison fails', async () => {
+    const handler = new ConditionNodeHandler();
+    const node: BpmnNode = {
+      id: 'c1',
+      type: 'condition',
+      position: { x: 0, y: 0 },
+      data: {
+        label: 'АД > 140',
+        attributes: [
+          { name: 'inputField', value: 'systolicBP' },
+          { name: 'inputType', value: 'number' },
+          { name: 'compareOperator', value: '>' },
+          { name: 'compareValue', value: '140' },
+        ],
+      },
+    } as BpmnNode;
+    const edges: BpmnEdge[] = [
+      { id: 'e-yes', source: 'c1', target: 'yes-node', sourceHandle: 'true' },
+      { id: 'e-no', source: 'c1', target: 'no-node', sourceHandle: 'false' },
+    ];
+    const out = await handler.execute(node, ctx({ systolicBP: 120 }), edges);
+    expect(out.conditionResult).toBe(false);
+    expect(out.nextNodeId).toBe('no-node');
   });
 });

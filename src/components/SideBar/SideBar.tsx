@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Sidebar.module.scss"
 import { Tabs, TabsItemProps } from '@gravity-ui/uikit';
 import { ChoiceItem } from "../ChoiceItem/ChoiceItem";
@@ -13,13 +13,14 @@ export const SideBar = observer(() => {
     const [typeNewNode, setTypeNewNode] = useState<undefined | TypesChoiceItem>(undefined);
     const [newNameNode, setNewNameNode] = useState<undefined | string>(undefined);
     const [open, setOpen] = useState(false);
-
-    // Получаем список доступных процессов из store
-    const processes = bpmnStore.availableProcesses;
-    const items: TabsItemProps[] = processes.map(process => ({
+    const processes: TabsItemProps[] = bpmnStore.availableProcesses.map(process => ({
         id: process.id,
-        title: process.name
+        title: process.name,
     }));
+
+    useEffect(() => {
+        setActiveTab(bpmnStore.activeProcessId);
+    }, [bpmnStore.activeProcessId]);
 
     const onSelectTabEvent = (tabId: string) => {
         setActiveTab(tabId);
@@ -52,8 +53,6 @@ export const SideBar = observer(() => {
                 attributes: attributes
             }
         };
-        console.log('newNode', newNode);
-
         bpmnStore.addNewNode(newNode);
         setNewNameNode(undefined);
         setOpen(false);
@@ -61,18 +60,21 @@ export const SideBar = observer(() => {
 
     return (
         <section className={styles.sideBar}>
-            <ModalAddNode 
-                isOpen={open} 
-                setOpen={setOpen} 
+            <ModalAddNode
+                isOpen={open}
+                setOpen={setOpen}
                 onSave={onAddNewNode}
                 attributes={[]}
                 type="create"
             />
-            <Tabs
-                activeTab={activeTab}
-                items={items}
-                onSelectTab={onSelectTabEvent}
-            />
+            <div className={styles.tabs}>
+                <Tabs
+                    activeTab={activeTab}
+                    items={processes}
+                    onSelectTab={onSelectTabEvent}
+                />
+            </div>
+
             <section className={styles.choice}>
                 {svgTypes.map((el, ind) => (
                     <ChoiceItem svg={el.svg} type={el.type} key={ind} action={testaction} />

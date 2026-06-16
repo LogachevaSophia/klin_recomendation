@@ -37,6 +37,7 @@ export const RecommendationForm: React.FC<RecommendationFormProps> = ({
       setLoading(true);
       setError(null);
       await onSubmit(formData);
+      console.log('formData', formData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to submit form');
     } finally {

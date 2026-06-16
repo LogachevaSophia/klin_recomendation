@@ -19,8 +19,8 @@ export const FlowEditorPage: React.FC = observer(() => {
     null
   );
 
-  const recommendation = id ? recommendationStore.recommendations.find((r) => r.id === id) : null;
-  const recommendationTitle = recommendation?.title || 'Flow Editor';
+  const recommendation = id ? recommendationStore.recommendations.find((r) => r.process_id === id) : null;
+  const recommendationTitle = recommendation?.name || 'Flow Editor';
 
   const handleDumpData = async () => {
     if (!id) return;

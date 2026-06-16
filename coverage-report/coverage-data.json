@@ -1,0 +1,165 @@
+{
+  "generatedAt": "2026-05-27T21:20:50.296Z",
+  "rows": [
+    {
+      "id": "klin-rec-editor",
+      "name": "Редактор схем клинических рекомендаций (klin-rec)",
+      "lines": 95.41,
+      "statements": 85.87,
+      "functions": 97.61500000000001,
+      "branches": 67.89,
+      "moduleAvg": 87,
+      "modules": [
+        {
+          "name": "clinrecProcessMapper",
+          "coverage": {
+            "lines": 90.82,
+            "statements": 78.41,
+            "functions": 95.23,
+            "branches": 64.36
+          }
+        },
+        {
+          "name": "permissions",
+          "coverage": {
+            "lines": 100,
+            "statements": 93.33,
+            "functions": 100,
+            "branches": 71.42
+          }
+        }
+      ]
+    },
+    {
+      "id": "prompt-comparison",
+      "name": "Стратегии промптинга для сравнения графов",
+      "lines": 77.315,
+      "statements": 76.595,
+      "functions": 82.95,
+      "branches": 62.16,
+      "moduleAvg": 75,
+      "modules": [
+        {
+          "name": "graphDiff",
+          "coverage": {
+            "lines": 75.47,
+            "statements": 76.27,
+            "functions": 90.9,
+            "branches": 59.32
+          }
+        },
+        {
+          "name": "promptStrategies",
+          "coverage": {
+            "lines": 79.16,
+            "statements": 76.92,
+            "functions": 75,
+            "branches": 65
+          }
+        }
+      ]
+    },
+    {
+      "id": "execution-engine",
+      "name": "Движок исполнения визуальных алгоритмов",
+      "lines": 47.02666666666667,
+      "statements": 46.72666666666667,
+      "functions": 55.31,
+      "branches": 34.51,
+      "moduleAvg": 46,
+      "modules": [
+        {
+          "name": "ExecutionEngine",
+          "coverage": {
+            "lines": 45.27,
+            "statements": 45.63,
+            "functions": 46.15,
+            "branches": 38.57
+          }
+        },
+        {
+          "name": "nodeHandlers",
+          "coverage": {
+            "lines": 59,
+            "statements": 57.74,
+            "functions": 66.66,
+            "branches": 43.98
+          }
+        },
+        {
+          "name": "conditionEvaluator",
+          "coverage": {
+            "lines": 36.81,
+            "statements": 36.81,
+            "functions": 53.12,
+            "branches": 20.98
+          }
+        }
+      ]
+    },
+    {
+      "id": "iam-gateway",
+      "name": "IAM / API Gateway (iam-service)",
+      "lines": 61.34,
+      "statements": 59.75,
+      "functions": 56.09,
+      "branches": 55.03,
+      "moduleAvg": 65,
+      "modules": [
+        {
+          "name": "policy-engine",
+          "coverage": {
+            "lines": 100,
+            "statements": 100,
+            "functions": 100,
+            "branches": 96.87
+          }
+        },
+        {
+          "name": "permission.service",
+          "coverage": {
+            "lines": 56.45,
+            "statements": 55.38,
+            "functions": 54.54,
+            "branches": 33.33
+          }
+        },
+        {
+          "name": "user.service",
+          "coverage": {
+            "lines": 26.38,
+            "statements": 25.67,
+            "functions": 14.28,
+            "branches": 15.78
+          }
+        },
+        {
+          "name": "clinrec-client",
+          "coverage": {
+            "lines": 80,
+            "statements": 75.86,
+            "functions": 91.66,
+            "branches": 44.82
+          }
+        },
+        {
+          "name": "auth.middleware",
+          "coverage": null
+        },
+        {
+          "name": "rest-proxy",
+          "coverage": null
+        },
+        {
+          "name": "config",
+          "coverage": {
+            "lines": 87.5,
+            "statements": 87.5,
+            "functions": 100,
+            "branches": 51.61
+          }
+        }
+      ]
+    }
+  ]
+}
